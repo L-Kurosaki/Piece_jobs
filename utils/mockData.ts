@@ -10,7 +10,7 @@ export const mockUsers: User[] = [
     email: 'john@example.com',
     phone: '+27123456789',
     role: 'customer',
-    avatar: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=400',
+    avatar: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
     location: {
       address: 'Cape Town, South Africa',
       latitude: -33.9249,
@@ -37,7 +37,7 @@ export const mockUsers: User[] = [
     email: 'sarah@example.com',
     phone: '+27987654321',
     role: 'provider',
-    avatar: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=400',
+    avatar: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
     location: {
       address: 'Johannesburg, South Africa',
       latitude: -26.2041,
@@ -76,7 +76,7 @@ export const mockUsers: User[] = [
     email: 'david@example.com',
     phone: '+27765432198',
     role: 'provider',
-    avatar: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=400',
+    avatar: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
     location: {
       address: 'Durban, South Africa',
       latitude: -29.8587,
@@ -111,7 +111,7 @@ export const mockUsers: User[] = [
   },
 ];
 
-// Mock Jobs - Optimized and cleaned up
+// Mock Jobs
 export const mockJobs: Job[] = [
   {
     id: 'job1',
@@ -119,8 +119,8 @@ export const mockJobs: Job[] = [
     category: 'cleaning',
     description: 'Need a thorough cleaning of my 3-bedroom house, including kitchen and bathrooms. Should take approximately 4 hours.',
     images: [
-      'https://images.pexels.com/photos/1669799/pexels-photo-1669799.jpeg?auto=compress&cs=tinysrgb&w=800',
-      'https://images.pexels.com/photos/4107268/pexels-photo-4107268.jpeg?auto=compress&cs=tinysrgb&w=800'
+      'https://images.pexels.com/photos/1669799/pexels-photo-1669799.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+      'https://images.pexels.com/photos/4107268/pexels-photo-4107268.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'
     ],
     location: {
       address: 'Cape Town, South Africa',
@@ -143,7 +143,7 @@ export const mockJobs: Job[] = [
         jobId: 'job1',
         providerId: 'provider1',
         providerName: 'Sarah Provider',
-        providerAvatar: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=400',
+        providerAvatar: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
         price: 400,
         message: 'I can do a thorough cleaning of your home. I bring my own cleaning supplies and have experience with all types of surfaces.',
         rating: 4.9,
@@ -158,8 +158,8 @@ export const mockJobs: Job[] = [
     category: 'gardening',
     description: 'Looking for someone to mow the lawn, trim hedges, and do general garden maintenance. Approximately 3 hours of work.',
     images: [
-      'https://images.pexels.com/photos/589/garden-grass-meadow-green.jpg?auto=compress&cs=tinysrgb&w=800',
-      'https://images.pexels.com/photos/1159693/pexels-photo-1159693.jpeg?auto=compress&cs=tinysrgb&w=800'
+      'https://images.pexels.com/photos/589/garden-grass-meadow-green.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+      'https://images.pexels.com/photos/1159693/pexels-photo-1159693.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'
     ],
     location: {
       address: 'Johannesburg, South Africa',
@@ -182,7 +182,7 @@ export const mockJobs: Job[] = [
         jobId: 'job2',
         providerId: 'provider2',
         providerName: 'David Handyman',
-        providerAvatar: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=400',
+        providerAvatar: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
         price: 300,
         message: 'I have all the necessary tools for garden maintenance and can make your garden look great!',
         rating: 4.7,
@@ -200,8 +200,8 @@ export const mockJobs: Job[] = [
     category: 'maintenance',
     description: 'Need help assembling a new bed frame and wardrobe. All tools should be provided by the service provider.',
     images: [
-      'https://images.pexels.com/photos/698170/pexels-photo-698170.jpeg?auto=compress&cs=tinysrgb&w=800',
-      'https://images.pexels.com/photos/5331071/pexels-photo-5331071.jpeg?auto=compress&cs=tinysrgb&w=800'
+      'https://images.pexels.com/photos/698170/pexels-photo-698170.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+      'https://images.pexels.com/photos/5331071/pexels-photo-5331071.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'
     ],
     location: {
       address: 'Durban, South Africa',
@@ -224,7 +224,7 @@ export const mockJobs: Job[] = [
         jobId: 'job3',
         providerId: 'provider2',
         providerName: 'David Handyman',
-        providerAvatar: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=400',
+        providerAvatar: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
         price: 350,
         message: 'I\'m experienced with furniture assembly and have all the necessary tools. I can complete this job efficiently.',
         rating: 4.7,
@@ -239,7 +239,7 @@ export const mockJobs: Job[] = [
   },
 ];
 
-// Mock Conversations - Cleaned up
+// Mock Conversations
 export const mockConversations: Conversation[] = [
   {
     id: 'conv1',
@@ -247,15 +247,6 @@ export const mockConversations: Conversation[] = [
     jobId: 'job1',
     unreadCount: 2,
     createdAt: Date.now() - 1 * 24 * 60 * 60 * 1000, // 1 day ago
-    lastMessage: {
-      id: 'msg4',
-      conversationId: 'conv1',
-      senderId: 'provider1',
-      receiverId: 'user1',
-      text: 'Also, do you have any pets I should be aware of?',
-      timestamp: Date.now() - 2 * 60 * 60 * 1000, // 2 hours ago
-      read: false,
-    },
   },
   {
     id: 'conv2',
@@ -263,19 +254,10 @@ export const mockConversations: Conversation[] = [
     jobId: 'job2',
     unreadCount: 0,
     createdAt: Date.now() - 4 * 24 * 60 * 60 * 1000, // 4 days ago
-    lastMessage: {
-      id: 'msg8',
-      conversationId: 'conv2',
-      senderId: 'user1',
-      receiverId: 'provider2',
-      text: 'The garden looks fantastic! Thank you for your excellent work. I\'ve left you a 5-star review.',
-      timestamp: Date.now() - 1 * 24 * 60 * 60 * 1000 + 8 * 60 * 60 * 1000, // 1 day ago + 8 hours
-      read: true,
-    },
   },
 ];
 
-// Mock Messages - Optimized
+// Mock Messages
 export const mockMessages: Record<string, Message[]> = {
   conv1: [
     {
@@ -355,7 +337,6 @@ export const mockMessages: Record<string, Message[]> = {
   ],
 };
 
-// Helper functions
 export const getJobById = (jobId: string): Job | undefined => {
   return mockJobs.find((job) => job.id === jobId);
 };
