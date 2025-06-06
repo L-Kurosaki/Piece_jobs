@@ -5,28 +5,30 @@ import Text from '../ui/Text';
 import Card from '../ui/Card';
 import Badge from '../ui/Badge';
 import Avatar from '../ui/Avatar';
+import Button from '../ui/Button';
 import Layout from '../../constants/Layout';
 import Colors from '../../constants/Colors';
-import { MapPin, Clock, DollarSign, User, Calendar } from 'lucide-react-native';
+import { MapPin, Clock, DollarSign, User, Calendar, Eye, MessageSquare } from 'lucide-react-native';
 
 interface JobCardProps {
   job: Job;
   onPress: () => void;
+  showBidButton?: boolean;
 }
 
-export const JobCard: React.FC<JobCardProps> = ({ job, onPress }) => {
+export const JobCard: React.FC<JobCardProps> = ({ job, onPress, showBidButton = false }) => {
   const getStatusBadge = () => {
     switch (job.status) {
       case 'pending':
-        return <Badge label="Pending\" variant="warning" />;
+        return <Badge label="Open for Bids" variant="success" />;
       case 'accepted':
-        return <Badge label="Accepted\" variant="primary" />;
+        return <Badge label="Accepted" variant="primary" />;
       case 'in-progress':
-        return <Badge label="In Progress\" variant="primary" />;
+        return <Badge label="In Progress" variant="primary" />;
       case 'completed':
-        return <Badge label="Completed\" variant="success" />;
+        return <Badge label="Completed" variant="neutral" />;
       case 'cancelled':
-        return <Badge label="Cancelled\" variant="error" />;
+        return <Badge label="Cancelled" variant="error" />;
       default:
         return null;
     }
@@ -35,19 +37,19 @@ export const JobCard: React.FC<JobCardProps> = ({ job, onPress }) => {
   const getCategoryBadge = () => {
     switch (job.category) {
       case 'cleaning':
-        return <Badge label="Cleaning\" variant="secondary" />;
+        return <Badge label="Cleaning" variant="secondary" />;
       case 'gardening':
-        return <Badge label="Gardening\" variant="secondary" />;
+        return <Badge label="Gardening" variant="secondary" />;
       case 'maintenance':
-        return <Badge label="Maintenance\" variant="secondary" />;
+        return <Badge label="Maintenance" variant="secondary" />;
       case 'delivery':
-        return <Badge label="Delivery\" variant="secondary" />;
+        return <Badge label="Delivery" variant="secondary" />;
       case 'moving':
-        return <Badge label="Moving\" variant="secondary" />;
+        return <Badge label="Moving" variant="secondary" />;
       case 'cooking':
-        return <Badge label="Cooking\" variant="secondary" />;
+        return <Badge label="Cooking" variant="secondary" />;
       default:
-        return <Badge label="Other\" variant="secondary" />;
+        return <Badge label="Other" variant="secondary" />;
     }
   };
 
@@ -66,8 +68,14 @@ export const JobCard: React.FC<JobCardProps> = ({ job, onPress }) => {
     }
   };
 
+  const handleCardPress = () => {
+    if (!showBidButton) {
+      onPress();
+    }
+  };
+
   return (
-    <Card onPress={onPress} style={styles.card}>
+    <Card onPress={handleCardPress} style={styles.card}>
       <View style={styles.imageContainer}>
         <Image source={{ uri: job.images[0] }} style={styles.image} />
         <View style={styles.badgeContainer}>
@@ -129,6 +137,27 @@ export const JobCard: React.FC<JobCardProps> = ({ job, onPress }) => {
             </Text>
           </View>
         </View>
+
+        {showBidButton && job.status === 'pending' && (
+          <View style={styles.actionButtons}>
+            <Button
+              title="View Details"
+              variant="outline"
+              size="small"
+              onPress={onPress}
+              leftIcon={<Eye size={16} color={Colors.primary[500]} />}
+              style={styles.actionButton}
+            />
+            <Button
+              title="Place Bid"
+              variant="primary"
+              size="small"
+              onPress={onPress}
+              leftIcon={<MessageSquare size={16} color={Colors.white} />}
+              style={styles.actionButton}
+            />
+          </View>
+        )}
       </View>
     </Card>
   );
@@ -200,6 +229,17 @@ const styles = StyleSheet.create({
   },
   timeText: {
     marginLeft: 4,
+  },
+  actionButtons: {
+    flexDirection: 'row',
+    marginTop: Layout.spacing.md,
+    paddingTop: Layout.spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: Colors.neutral[200],
+  },
+  actionButton: {
+    flex: 1,
+    marginHorizontal: Layout.spacing.xs,
   },
 });
 
