@@ -48,10 +48,6 @@ export default function HomeScreen() {
     ? mockJobs.filter(job => job.category === selectedCategory)
     : mockJobs;
 
-  const handleJobPress = (jobId: string) => {
-    router.push(`/job-details/${jobId}`);
-  };
-
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -90,7 +86,7 @@ export default function HomeScreen() {
             <JobCard
               key={job.id}
               job={job}
-              onPress={() => handleJobPress(job.id)}
+              onPress={() => router.push(`/jobs/${job.id}`)}
             />
           ))}
 
