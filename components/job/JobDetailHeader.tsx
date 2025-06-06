@@ -6,7 +6,7 @@ import Badge from '../ui/Badge';
 import Avatar from '../ui/Avatar';
 import Layout from '../../constants/Layout';
 import Colors from '../../constants/Colors';
-import { MapPin, Clock, DollarSign, Calendar } from 'lucide-react-native';
+import { MapPin, Clock, Banknote, Calendar } from 'lucide-react-native';
 
 interface JobDetailHeaderProps {
   job: Job;
@@ -22,15 +22,15 @@ export const JobDetailHeader: React.FC<JobDetailHeaderProps> = ({ job }) => {
   const getStatusBadge = () => {
     switch (job.status) {
       case 'pending':
-        return <Badge label="Pending\" variant="warning\" size="medium" />;
+        return <Badge label="Pending" variant="warning" size="medium" />;
       case 'accepted':
-        return <Badge label="Accepted\" variant="primary\" size="medium" />;
+        return <Badge label="Accepted" variant="primary" size="medium" />;
       case 'in-progress':
-        return <Badge label="In Progress\" variant="primary\" size="medium" />;
+        return <Badge label="In Progress" variant="primary" size="medium" />;
       case 'completed':
-        return <Badge label="Completed\" variant="success\" size="medium" />;
+        return <Badge label="Completed" variant="success" size="medium" />;
       case 'cancelled':
-        return <Badge label="Cancelled\" variant="error\" size="medium" />;
+        return <Badge label="Cancelled" variant="error" size="medium" />;
       default:
         return null;
     }
@@ -39,19 +39,19 @@ export const JobDetailHeader: React.FC<JobDetailHeaderProps> = ({ job }) => {
   const getCategoryBadge = () => {
     switch (job.category) {
       case 'cleaning':
-        return <Badge label="Cleaning\" variant="secondary" />;
+        return <Badge label="Cleaning" variant="secondary" />;
       case 'gardening':
-        return <Badge label="Gardening\" variant="secondary" />;
+        return <Badge label="Gardening" variant="secondary" />;
       case 'maintenance':
-        return <Badge label="Maintenance\" variant="secondary" />;
+        return <Badge label="Maintenance" variant="secondary" />;
       case 'delivery':
-        return <Badge label="Delivery\" variant="secondary" />;
+        return <Badge label="Delivery" variant="secondary" />;
       case 'moving':
-        return <Badge label="Moving\" variant="secondary" />;
+        return <Badge label="Moving" variant="secondary" />;
       case 'cooking':
-        return <Badge label="Cooking\" variant="secondary" />;
+        return <Badge label="Cooking" variant="secondary" />;
       default:
-        return <Badge label="Other\" variant="secondary" />;
+        return <Badge label="Other" variant="secondary" />;
     }
   };
 
@@ -110,7 +110,7 @@ export const JobDetailHeader: React.FC<JobDetailHeaderProps> = ({ job }) => {
           </View>
           
           <View style={styles.detailItem}>
-            <DollarSign size={18} color={Colors.primary[500]} />
+            <Banknote size={18} color={Colors.primary[500]} />
             <Text variant="body2" style={styles.detailText}>
               Budget: R{job.budget.min} - R{job.budget.max}
             </Text>
