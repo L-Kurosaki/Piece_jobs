@@ -1,9 +1,14 @@
 import { Tabs } from 'expo-router';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import Colors from '../../constants/Colors';
 import { Chrome as Home, Briefcase, CirclePlus as PlusCircle, MessageSquare, User } from 'lucide-react-native';
+import NotificationBadge from '../../components/ui/NotificationBadge';
 
 export default function TabLayout() {
+  // Mock notification counts - in a real app, these would come from state/context
+  const messageCount = 3;
+  const jobCount = 2;
+
   return (
     <Tabs
       screenOptions={{
@@ -26,7 +31,12 @@ export default function TabLayout() {
         name="jobs"
         options={{
           title: 'Jobs',
-          tabBarIcon: ({ color, size }) => <Briefcase size={size} color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <View style={styles.iconContainer}>
+              <Briefcase size={size} color={color} />
+              {jobCount > 0 && <NotificationBadge count={jobCount} size="small" />}
+            </View>
+          ),
         }}
       />
       <Tabs.Screen
@@ -40,7 +50,12 @@ export default function TabLayout() {
         name="messages"
         options={{
           title: 'Messages',
-          tabBarIcon: ({ color, size }) => <MessageSquare size={size} color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <View style={styles.iconContainer}>
+              <MessageSquare size={size} color={color} />
+              {messageCount > 0 && <NotificationBadge count={messageCount} size="small" />}
+            </View>
+          ),
         }}
       />
       <Tabs.Screen
@@ -65,5 +80,8 @@ const styles = StyleSheet.create({
   tabLabel: {
     fontSize: 12,
     fontFamily: 'Poppins-Medium',
+  },
+  iconContainer: {
+    position: 'relative',
   },
 });

@@ -15,7 +15,8 @@ import Layout from '../../../constants/Layout';
 import Text from '../../../components/ui/Text';
 import Input from '../../../components/ui/Input';
 import Button from '../../../components/ui/Button';
-import { Camera, Upload, MapPin, Clock, DollarSign, X } from 'lucide-react-native';
+import LocationPicker from '../../../components/ui/LocationPicker';
+import { Camera, Upload, Clock, DollarSign, X, CircleCheck as CheckCircle2 } from 'lucide-react-native';
 import { JobCategory } from '../../../types/Job';
 
 // Categories for selection
@@ -33,7 +34,7 @@ export default function PostJobScreen() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState<JobCategory | ''>('');
-  const [location, setLocation] = useState('');
+  const [location, setLocation] = useState<{ address: string; latitude: number; longitude: number } | null>(null);
   const [duration, setDuration] = useState('');
   const [minBudget, setMinBudget] = useState('');
   const [maxBudget, setMaxBudget] = useState('');
@@ -88,44 +89,72 @@ export default function PostJobScreen() {
     setImages(newImages);
   };
 
-  const handleSubmit = () => {
-    // Validate input
-    if (!title || !description || !category || !location || !duration || !minBudget || !maxBudget) {
-      Alert.alert('Missing Information', 'Please fill in all the required fields.');
-      return;
-    }
+  const validateForm = () => {
+    if (!title.trim()) return 'Job title is required';
+    if (!description.trim()) return 'Job description is required';
+    if (!category) return 'Please select a category';
+    if (!location) return 'Location is required';
+    if (!duration || isNaN(Number(duration)) || Number(duration) <= 0) return 'Valid duration is required';
+    if (!minBudget || isNaN(Number(minBudget)) || Number(minBudget) <= 0) return 'Valid minimum budget is required';
+    if (!maxBudget || isNaN(Number(maxBudget)) || Number(maxBudget) <= 0) return 'Valid maximum budget is required';
+    if (Number(minBudget) >= Number(maxBudget)) return 'Maximum budget must be greater than minimum budget';
+    if (images.length === 0) return 'At least one image is required';
+    return null;
+  };
 
-    if (images.length === 0) {
-      Alert.alert('Image Required', 'Please add at least one image of the job.');
+  const handleSubmit = async () => {
+    const validationError = validateForm();
+    if (validationError) {
+      Alert.alert('Validation Error', validationError);
       return;
     }
 
     setLoading(true);
 
-    // In a real app, we would submit the form to an API
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
       Alert.alert(
-        'Job Posted Successfully',
-        'Your job has been posted and is now visible to service providers.',
+        'Job Posted Successfully! 🎉',
+        'Your job has been posted and is now visible to service providers. You\'ll receive notifications when providers submit bids.',
         [
           { 
-            text: 'OK', 
+            text: 'View My Jobs', 
             onPress: () => {
               // Reset form
               setTitle('');
               setDescription('');
               setCategory('');
-              setLocation('');
+              setLocation(null);
               setDuration('');
               setMinBudget('');
               setMaxBudget('');
               setImages([]);
+              // Navigate to jobs tab
             } 
+          },
+          {
+            text: 'Post Another Job',
+            onPress: () => {
+              // Reset form
+              setTitle('');
+              setDescription('');
+              setCategory('');
+              setLocation(null);
+              setDuration('');
+              setMinBudget('');
+              setMaxBudget('');
+              setImages([]);
+            }
           }
         ]
       );
-    }, 1500);
+    } catch (error) {
+      Alert.alert('Error', 'Failed to post job. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -136,17 +165,18 @@ export default function PostJobScreen() {
             Post a New Job
           </Text>
           <Text variant="body1" color="secondary" style={styles.subtitle}>
-            Fill in the details of your job and wait for bids from service providers.
+            Describe your job clearly to attract the best service providers.
           </Text>
         </View>
 
         <View style={styles.form}>
-          <View style={styles.imageSection}>
-            <Text variant="body1" weight="semibold">
-              Job Photos
+          {/* Job Photos Section */}
+          <View style={styles.section}>
+            <Text variant="h4" weight="semibold" style={styles.sectionTitle}>
+              Job Photos *
             </Text>
-            <Text variant="body2" color="secondary" style={styles.imageInstructions}>
-              Upload photos of the job site to help providers understand the work required.
+            <Text variant="body2" color="secondary" style={styles.sectionDescription}>
+              Upload clear photos of the job site to help providers understand the work required.
             </Text>
 
             <View style={styles.imagesContainer}>
@@ -162,7 +192,7 @@ export default function PostJobScreen() {
                 </View>
               ))}
               
-              {images.length < 3 && (
+              {images.length < 5 && (
                 <View style={styles.imageButtons}>
                   <TouchableOpacity style={styles.addImageButton} onPress={pickImage}>
                     <Upload size={24} color={Colors.primary[500]} />
@@ -184,85 +214,140 @@ export default function PostJobScreen() {
             </View>
           </View>
 
-          <Input
-            label="Job Title"
-            value={title}
-            onChangeText={setTitle}
-            placeholder="e.g., House Cleaning, Garden Maintenance"
-          />
+          {/* Basic Information */}
+          <View style={styles.section}>
+            <Text variant="h4" weight="semibold" style={styles.sectionTitle}>
+              Job Details
+            </Text>
 
-          <Text variant="body1" weight="semibold" style={styles.fieldLabel}>
-            Category
-          </Text>
-          <View style={styles.categoryContainer}>
-            {categories.map((cat) => (
-              <TouchableOpacity
-                key={cat.value}
-                style={[
-                  styles.categoryButton,
-                  category === cat.value && styles.selectedCategory,
-                ]}
-                onPress={() => setCategory(cat.value)}
-              >
-                <Text
-                  variant="body2"
-                  color={category === cat.value ? 'white' : 'secondary'}
-                >
-                  {cat.label}
-                </Text>
-              </TouchableOpacity>
-            ))}
+            <Input
+              label="Job Title *"
+              value={title}
+              onChangeText={setTitle}
+              placeholder="e.g., Deep Clean 3-Bedroom House"
+              helper="Be specific about what needs to be done"
+            />
+
+            <View style={styles.categorySection}>
+              <Text variant="body1" weight="semibold" style={styles.fieldLabel}>
+                Category *
+              </Text>
+              <View style={styles.categoryContainer}>
+                {categories.map((cat) => (
+                  <TouchableOpacity
+                    key={cat.value}
+                    style={[
+                      styles.categoryButton,
+                      category === cat.value && styles.selectedCategory,
+                    ]}
+                    onPress={() => setCategory(cat.value)}
+                  >
+                    <Text
+                      variant="body2"
+                      color={category === cat.value ? 'white' : 'secondary'}
+                      weight={category === cat.value ? 'medium' : 'regular'}
+                    >
+                      {cat.label}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+
+            <Input
+              label="Description *"
+              value={description}
+              onChangeText={setDescription}
+              placeholder="Describe the job in detail, including any specific requirements or preferences..."
+              multiline
+              numberOfLines={4}
+              helper="The more details you provide, the better bids you'll receive"
+            />
           </View>
 
-          <Input
-            label="Description"
-            value={description}
-            onChangeText={setDescription}
-            placeholder="Describe the job in detail"
-            multiline
-            numberOfLines={4}
-          />
-
-          <Input
-            label="Location"
-            value={location}
-            onChangeText={setLocation}
-            placeholder="Enter your address"
-            leftIcon={<MapPin size={20} color={Colors.neutral[500]} />}
-          />
-
-          <Input
-            label="Expected Duration (hours)"
-            value={duration}
-            onChangeText={setDuration}
-            placeholder="e.g., 3"
-            keyboardType="numeric"
-            leftIcon={<Clock size={20} color={Colors.neutral[500]} />}
-          />
-
-          <View style={styles.budgetContainer}>
-            <Text variant="body1" weight="semibold" style={styles.fieldLabel}>
-              Budget Range (ZAR)
+          {/* Location Section */}
+          <View style={styles.section}>
+            <Text variant="h4" weight="semibold" style={styles.sectionTitle}>
+              Location *
             </Text>
-            <View style={styles.budgetInputs}>
-              <Input
-                label="Min"
-                value={minBudget}
-                onChangeText={setMinBudget}
-                placeholder="e.g., 200"
-                keyboardType="numeric"
-                leftIcon={<DollarSign size={20} color={Colors.neutral[500]} />}
-                style={styles.budgetInput}
-              />
-              <Input
-                label="Max"
-                value={maxBudget}
-                onChangeText={setMaxBudget}
-                placeholder="e.g., 400"
-                keyboardType="numeric"
-                leftIcon={<DollarSign size={20} color={Colors.neutral[500]} />}
-                style={styles.budgetInput}
-              />
+            <LocationPicker
+              onLocationSelect={setLocation}
+              placeholder="Enter the job location"
+            />
+            {location && (
+              <View style={styles.locationConfirm}>
+                <CheckCircle2 size={16} color={Colors.success[500]} />
+                <Text variant="body2" color="success" style={styles.locationText}>
+                  Location set: {location.address}
+                </Text>
+              </View>
+            )}
+          </View>
+
+          {/* Time and Budget */}
+          <View style={styles.section}>
+            <Text variant="h4" weight="semibold" style={styles.sectionTitle}>
+              Time & Budget
+            </Text>
+
+            <Input
+              label="Expected Duration (hours) *"
+              value={duration}
+              onChangeText={setDuration}
+              placeholder="e.g., 3"
+              keyboardType="numeric"
+              leftIcon={<Clock size={20} color={Colors.neutral[500]} />}
+              helper="How long do you estimate this job will take?"
+            />
+
+            <View style={styles.budgetContainer}>
+              <Text variant="body1" weight="semibold" style={styles.fieldLabel}>
+                Budget Range (ZAR) *
+              </Text>
+              <View style={styles.budgetInputs}>
+                <Input
+                  label="Minimum"
+                  value={minBudget}
+                  onChangeText={setMinBudget}
+                  placeholder="200"
+                  keyboardType="numeric"
+                  leftIcon={<DollarSign size={20} color={Colors.neutral[500]} />}
+                  style={styles.budgetInput}
+                />
+                <Input
+                  label="Maximum"
+                  value={maxBudget}
+                  onChangeText={setMaxBudget}
+                  placeholder="400"
+                  keyboardType="numeric"
+                  leftIcon={<DollarSign size={20} color={Colors.neutral[500]} />}
+                  style={styles.budgetInput}
+                />
+              </View>
+              <Text variant="caption" color="secondary">
+                Set a realistic range to attract quality providers
+              </Text>
+            </View>
+          </View>
+
+          {/* Tips Section */}
+          <View style={styles.tipsSection}>
+            <Text variant="h4" weight="semibold" style={styles.sectionTitle}>
+              💡 Tips for Better Results
+            </Text>
+            <View style={styles.tipsList}>
+              <Text variant="body2" color="secondary" style={styles.tipItem}>
+                • Upload clear, well-lit photos from multiple angles
+              </Text>
+              <Text variant="body2" color="secondary" style={styles.tipItem}>
+                • Be specific about your requirements and expectations
+              </Text>
+              <Text variant="body2" color="secondary" style={styles.tipItem}>
+                • Set a fair budget range based on market rates
+              </Text>
+              <Text variant="body2" color="secondary" style={styles.tipItem}>
+                • Respond quickly to bids to secure the best providers
+              </Text>
             </View>
           </View>
         </View>
@@ -287,24 +372,27 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
   },
   scrollContent: {
-    paddingBottom: 100, // Extra padding for footer
+    paddingBottom: 100,
   },
   header: {
     padding: Layout.spacing.lg,
+    backgroundColor: Colors.primary[50],
   },
   subtitle: {
     marginTop: Layout.spacing.xs,
   },
   form: {
     padding: Layout.spacing.lg,
-    paddingTop: 0,
   },
-  imageSection: {
-    marginBottom: Layout.spacing.lg,
+  section: {
+    marginBottom: Layout.spacing.xl,
   },
-  imageInstructions: {
-    marginTop: Layout.spacing.xs,
+  sectionTitle: {
+    marginBottom: Layout.spacing.xs,
+  },
+  sectionDescription: {
     marginBottom: Layout.spacing.md,
+    lineHeight: 20,
   },
   imagesContainer: {
     flexDirection: 'row',
@@ -355,10 +443,12 @@ const styles = StyleSheet.create({
   fieldLabel: {
     marginBottom: Layout.spacing.xs,
   },
+  categorySection: {
+    marginBottom: Layout.spacing.lg,
+  },
   categoryContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginBottom: Layout.spacing.lg,
   },
   categoryButton: {
     paddingVertical: Layout.spacing.sm,
@@ -367,19 +457,49 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.neutral[100],
     marginRight: Layout.spacing.sm,
     marginBottom: Layout.spacing.sm,
+    borderWidth: 1,
+    borderColor: Colors.neutral[200],
   },
   selectedCategory: {
     backgroundColor: Colors.primary[500],
+    borderColor: Colors.primary[500],
+  },
+  locationConfirm: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: Layout.spacing.sm,
+    padding: Layout.spacing.sm,
+    backgroundColor: Colors.success[50],
+    borderRadius: Layout.borderRadius.md,
+  },
+  locationText: {
+    marginLeft: Layout.spacing.xs,
+    flex: 1,
   },
   budgetContainer: {
     marginBottom: Layout.spacing.lg,
   },
   budgetInputs: {
     flexDirection: 'row',
+    marginBottom: Layout.spacing.xs,
   },
   budgetInput: {
     flex: 1,
     marginRight: Layout.spacing.md,
+  },
+  tipsSection: {
+    backgroundColor: Colors.neutral[50],
+    padding: Layout.spacing.lg,
+    borderRadius: Layout.borderRadius.md,
+    borderWidth: 1,
+    borderColor: Colors.neutral[200],
+  },
+  tipsList: {
+    marginTop: Layout.spacing.sm,
+  },
+  tipItem: {
+    marginBottom: Layout.spacing.xs,
+    lineHeight: 20,
   },
   footer: {
     position: 'absolute',
