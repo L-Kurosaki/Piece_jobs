@@ -16,7 +16,7 @@ import Text from '../../../components/ui/Text';
 import Input from '../../../components/ui/Input';
 import Button from '../../../components/ui/Button';
 import LocationPicker from '../../../components/ui/LocationPicker';
-import { Camera, Upload, Clock, DollarSign, X, CheckCircle2 } from 'lucide-react-native';
+import { Camera, Upload, Clock, DollarSign, X, CircleCheck as CheckCircle2 } from 'lucide-react-native';
 import { JobCategory } from '../../../types/Job';
 
 // Categories for selection
