@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
+import { router } from 'expo-router';
 import Colors from '../../../constants/Colors';
 import Layout from '../../../constants/Layout';
 import Text from '../../../components/ui/Text';
@@ -19,7 +20,9 @@ import {
   LogOut,
   MapPin,
   Phone,
-  Mail
+  Mail,
+  Wallet,
+  ChevronRight
 } from 'lucide-react-native';
 
 // We'll assume the current user is user1 for this demo
@@ -81,6 +84,25 @@ export default function ProfileScreen() {
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
+        {/* Wallet Section */}
+        <View style={styles.section}>
+          <Card style={styles.walletCard} onPress={() => router.push('/profile/wallet')}>
+            <View style={styles.walletHeader}>
+              <View style={styles.walletIcon}>
+                <Wallet size={24} color={Colors.primary[500]} />
+              </View>
+              <View style={styles.walletInfo}>
+                <Text variant="h4" weight="semibold">Wallet</Text>
+                <Text variant="body2" color="secondary">Manage your earnings</Text>
+              </View>
+              <View style={styles.walletBalance}>
+                <Text variant="h4" weight="bold" color="primary">R0.00</Text>
+                <ChevronRight size={20} color={Colors.neutral[400]} />
+              </View>
+            </View>
+          </Card>
+        </View>
+
         <View style={styles.section}>
           <Text variant="h4" weight="semibold" style={styles.sectionTitle}>
             Contact Information
@@ -225,6 +247,29 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     marginBottom: Layout.spacing.md,
+  },
+  walletCard: {
+    padding: Layout.spacing.md,
+  },
+  walletHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  walletIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: Colors.primary[100],
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: Layout.spacing.md,
+  },
+  walletInfo: {
+    flex: 1,
+  },
+  walletBalance: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   infoCard: {
     padding: Layout.spacing.md,

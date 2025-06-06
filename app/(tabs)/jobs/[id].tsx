@@ -7,44 +7,92 @@ import Text from '../../../components/ui/Text';
 import Button from '../../../components/ui/Button';
 import JobDetailHeader from '../../../components/job/JobDetailHeader';
 import BidCard from '../../../components/job/BidCard';
+import JobTimer from '../../../components/job/JobTimer';
+import PaymentBreakdown from '../../../components/payment/PaymentBreakdown';
+import EmergencyButton from '../../../components/security/EmergencyButton';
 import { getJobById } from '../../../utils/mockData';
 import { Job } from '../../../types/Job';
-import { ChevronLeft } from 'lucide-react-native';
+import { securityService } from '../../../utils/securityService';
+import { paymentService } from '../../../utils/paymentService';
+import { ChevronLeft, Shield, DollarSign } from 'lucide-react-native';
 
 export default function JobDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const [job, setJob] = useState<Job | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showPaymentBreakdown, setShowPaymentBreakdown] = useState(false);
 
   useEffect(() => {
     if (id) {
-      // In a real app, we would fetch the job from the API
       const jobData = getJobById(id);
       setJob(jobData || null);
       setLoading(false);
+
+      // Start security timer if job is in progress
+      if (jobData && jobData.status === 'in-progress' && jobData.startTime) {
+        securityService.startJobTimer(jobData);
+      }
     }
   }, [id]);
 
-  const handleAcceptBid = (bidId: string) => {
-    // In a real app, we would call an API to accept the bid
-    console.log(`Accepting bid: ${bidId}`);
+  const handleAcceptBid = async (bidId: string) => {
+    if (!job) return;
     
-    // For demo purposes, update the job locally
-    if (job) {
-      const updatedJob = { 
-        ...job, 
-        status: 'accepted' as const,
-        acceptedBid: bidId,
-        providerId: job.bids.find(bid => bid.id === bidId)?.providerId,
-      };
-      setJob(updatedJob);
+    const bid = job.bids.find(b => b.id === bidId);
+    if (!bid) return;
+
+    try {
+      // Calculate payment
+      const payment = paymentService.calculatePayment(job, bid.price);
+      
+      // Process payment
+      const paymentSuccess = await paymentService.processPayment(payment);
+      
+      if (paymentSuccess) {
+        // Update job status
+        const updatedJob = { 
+          ...job, 
+          status: 'in-progress' as const,
+          acceptedBid: bidId,
+          providerId: bid.providerId,
+          startTime: Date.now(),
+        };
+        setJob(updatedJob);
+        
+        // Start security monitoring
+        securityService.startJobTimer(updatedJob);
+      } else {
+        alert('Payment processing failed. Please try again.');
+      }
+    } catch (error) {
+      alert('Error processing payment. Please try again.');
     }
   };
 
+  const handleCompleteJob = () => {
+    if (!job) return;
+    
+    const updatedJob = { 
+      ...job, 
+      status: 'completed' as const,
+      endTime: Date.now(),
+    };
+    setJob(updatedJob);
+    
+    // Stop security monitoring
+    securityService.completeJob(job.id);
+  };
+
   const handleContact = (providerId: string) => {
-    // In a real app, we would navigate to the message screen
-    console.log(`Contacting provider: ${providerId}`);
     router.push(`/messages/${providerId}`);
+  };
+
+  const handleTimerWarning = () => {
+    alert('Job is approaching the expected completion time. Please check in with the service provider.');
+  };
+
+  const handleTimerOverdue = () => {
+    alert('Job has exceeded maximum duration. Security services have been automatically notified for your safety.');
   };
 
   if (loading) {
@@ -69,6 +117,8 @@ export default function JobDetailScreen() {
     );
   }
 
+  const acceptedBid = job.bids.find(bid => bid.id === job.acceptedBid);
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.backButtonContainer}>
@@ -82,6 +132,36 @@ export default function JobDetailScreen() {
       
       <ScrollView>
         <JobDetailHeader job={job} />
+        
+        {/* Job Timer for in-progress jobs */}
+        {job.status === 'in-progress' && job.startTime && (
+          <View style={styles.content}>
+            <JobTimer
+              startTime={job.startTime}
+              expectedDuration={job.expectedDuration}
+              onWarning={handleTimerWarning}
+              onOverdue={handleTimerOverdue}
+            />
+          </View>
+        )}
+
+        {/* Payment Breakdown */}
+        {acceptedBid && (
+          <View style={styles.content}>
+            <PaymentBreakdown
+              category={job.category}
+              amount={acceptedBid.price}
+              showDetails={showPaymentBreakdown}
+            />
+            <Button
+              title={showPaymentBreakdown ? "Hide Details" : "Show Payment Details"}
+              variant="ghost"
+              size="small"
+              onPress={() => setShowPaymentBreakdown(!showPaymentBreakdown)}
+              leftIcon={<DollarSign size={16} color={Colors.primary[500]} />}
+            />
+          </View>
+        )}
         
         <View style={styles.content}>
           <View style={styles.section}>
@@ -107,15 +187,49 @@ export default function JobDetailScreen() {
               </View>
             )}
           </View>
+
+          {/* Emergency Button for active jobs */}
+          {(job.status === 'in-progress' || job.status === 'accepted') && (
+            <View style={styles.section}>
+              <View style={styles.emergencySection}>
+                <Shield size={24} color={Colors.error[500]} />
+                <Text variant="h4" weight="semibold" style={styles.emergencyTitle}>
+                  Safety & Security
+                </Text>
+              </View>
+              <Text variant="body2" color="secondary" style={styles.emergencyDescription}>
+                Your safety is our priority. Use the emergency button if you feel unsafe or need immediate assistance.
+              </Text>
+              <EmergencyButton
+                userId="user1" // In a real app, this would come from auth context
+                currentLocation={{
+                  latitude: job.location.latitude,
+                  longitude: job.location.longitude,
+                }}
+              />
+            </View>
+          )}
         </View>
       </ScrollView>
       
-      {job.status === 'pending' && (
+      {/* Action Buttons */}
+      {job.status === 'pending' && job.bids.length === 0 && (
         <View style={styles.footer}>
           <Button
             title="Place a Bid"
             variant="primary"
             onPress={() => console.log('Place bid')}
+            fullWidth
+          />
+        </View>
+      )}
+
+      {job.status === 'in-progress' && job.acceptedBid && (
+        <View style={styles.footer}>
+          <Button
+            title="Mark as Completed"
+            variant="success"
+            onPress={handleCompleteJob}
             fullWidth
           />
         </View>
@@ -163,6 +277,18 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
     borderRadius: Layout.borderRadius.md,
     alignItems: 'center',
+  },
+  emergencySection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: Layout.spacing.sm,
+  },
+  emergencyTitle: {
+    marginLeft: Layout.spacing.sm,
+  },
+  emergencyDescription: {
+    marginBottom: Layout.spacing.md,
+    lineHeight: 20,
   },
   footer: {
     padding: Layout.spacing.lg,
