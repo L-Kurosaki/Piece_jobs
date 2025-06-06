@@ -5,7 +5,7 @@ import Card from '../ui/Card';
 import Badge from '../ui/Badge';
 import Colors from '../../constants/Colors';
 import Layout from '../../constants/Layout';
-import { Clock, AlertTriangle, CheckCircle2 } from 'lucide-react-native';
+import { Clock, TriangleAlert as AlertTriangle, CircleCheck as CheckCircle2 } from 'lucide-react-native';
 
 interface JobTimerProps {
   startTime: number;
@@ -61,13 +61,13 @@ export const JobTimer: React.FC<JobTimerProps> = ({
 
   const getStatusBadge = () => {
     if (isCompleted) {
-      return <Badge label="Completed" variant="success" />;
+      return <Badge label="Completed\" variant="success" />;
     }
     if (isOverdue) {
-      return <Badge label="Overdue - Security Notified" variant="error" />;
+      return <Badge label="Overdue - Security Notified\" variant="error" />;
     }
     if (isWarning) {
-      return <Badge label="Approaching Time Limit" variant="warning" />;
+      return <Badge label="Approaching Time Limit\" variant="warning" />;
     }
     return <Badge label="In Progress" variant="primary" />;
   };
