@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Alert } from 'react-native';
-import { AlertTriangle, Shield } from 'lucide-react-native';
+import { TriangleAlert as AlertTriangle, Shield } from 'lucide-react-native';
 import Button from '../ui/Button';
 import Colors from '../../constants/Colors';
 import Layout from '../../constants/Layout';
