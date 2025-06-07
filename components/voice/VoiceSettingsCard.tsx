@@ -5,7 +5,7 @@ import Card from '../ui/Card';
 import Button from '../ui/Button';
 import Colors from '../../constants/Colors';
 import Layout from '../../constants/Layout';
-import { Volume2, Mic, AlertCircle, Settings } from 'lucide-react-native';
+import { Volume2, Mic, CircleAlert as AlertCircle, Settings } from 'lucide-react-native';
 
 interface VoiceSettingsCardProps {
   isVoiceEnabled: boolean;
