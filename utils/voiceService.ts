@@ -37,6 +37,12 @@ class VoiceService {
 
   async textToSpeech(text: string): Promise<void> {
     try {
+      // Check if API key is available
+      if (!this.config.elevenLabsApiKey) {
+        console.warn('ElevenLabs API key not configured. Skipping text-to-speech.');
+        return;
+      }
+
       const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${this.config.voiceId}`, {
         method: 'POST',
         headers: {
@@ -135,6 +141,10 @@ class VoiceService {
 
   isSpeechRecognitionSupported(): boolean {
     return !!this.recognition;
+  }
+
+  isConfigured(): boolean {
+    return !!this.config.elevenLabsApiKey;
   }
 }
 

@@ -95,7 +95,7 @@ export default function MessagesScreen() {
       ) : (
         <View style={styles.emptyState}>
           {searchQuery.trim() !== '' ? (
-            <Text variant="body1\" color="secondary\" centered>
+            <Text variant="body1" color="secondary" centered>
               No conversations found matching "{searchQuery}"
             </Text>
           ) : (
