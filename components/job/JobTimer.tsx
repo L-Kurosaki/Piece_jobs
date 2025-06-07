@@ -61,13 +61,13 @@ export const JobTimer: React.FC<JobTimerProps> = ({
 
   const getStatusBadge = () => {
     if (isCompleted) {
-      return <Badge label="Completed" variant="success" />;
+      return <Badge label="Completed\" variant="success" />;
     }
     if (isOverdue) {
-      return <Badge label="Overdue - Security Notified" variant="error" />;
+      return <Badge label="Overdue - Security Notified\" variant="error" />;
     }
     if (isWarning) {
-      return <Badge label="Approaching Time Limit" variant="warning" />;
+      return <Badge label="Approaching Time Limit\" variant="warning" />;
     }
     return <Badge label="In Progress" variant="primary" />;
   };
