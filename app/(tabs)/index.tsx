@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
 import { router } from 'expo-router';
 import Colors from '../../constants/Colors';
@@ -7,7 +7,9 @@ import Text from '../../components/ui/Text';
 import Button from '../../components/ui/Button';
 import JobCard from '../../components/job/JobCard';
 import CategorySelector from '../../components/ui/CategorySelector';
-import { Briefcase, Search, Compass, Sparkles, CircleCheck as CheckCircle2 } from 'lucide-react-native';
+import DailyVoiceBriefing from '../../components/voice/DailyVoiceBriefing';
+import VoiceNotificationReader from '../../components/voice/VoiceNotificationReader';
+import { Briefcase, Search, Compass, Sparkles, CircleCheck as CheckCircle2, Bell } from 'lucide-react-native';
 import { mockJobs } from '../../utils/mockData';
 import { JobCategory } from '../../types/Job';
 
@@ -42,20 +44,67 @@ const categories = [
 
 export default function HomeScreen() {
   const [selectedCategory, setSelectedCategory] = useState<JobCategory | null>(null);
+  const [showBriefing, setShowBriefing] = useState(false);
+  const [notification, setNotification] = useState<any>(null);
+
+  // Check if it's morning and show briefing
+  useEffect(() => {
+    const currentHour = new Date().getHours();
+    if (currentHour >= 6 && currentHour <= 10) {
+      // Show briefing in the morning
+      setTimeout(() => setShowBriefing(true), 2000);
+    }
+
+    // Simulate incoming notification after 5 seconds
+    setTimeout(() => {
+      setNotification({
+        id: 'notif1',
+        title: 'New Message',
+        message: 'Hi! I\'m interested in your cleaning job. When would be a good time to start?',
+        senderName: 'Sarah Provider',
+        timestamp: Date.now(),
+      });
+    }, 5000);
+  }, []);
 
   // Filter jobs based on selected category
   const filteredJobs = selectedCategory
     ? mockJobs.filter(job => job.category === selectedCategory)
     : mockJobs;
 
+  const handleNotificationReply = (message: string) => {
+    console.log('Replying with:', message);
+    // In a real app, this would send the message
+  };
+
+  const handleDismissNotification = () => {
+    setNotification(null);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text variant="h2" weight="bold" style={styles.title}>PieceJob</Text>
+        <View style={styles.titleRow}>
+          <Text variant="h2" weight="bold" style={styles.title}>PieceJob</Text>
+          <Button
+            title=""
+            variant="ghost"
+            size="small"
+            onPress={() => setShowBriefing(true)}
+            leftIcon={<Bell size={20} color={Colors.primary[500]} />}
+          />
+        </View>
         <Text variant="body1" color="secondary" style={styles.subtitle}>
-          Find your next opportunity
+          Find your next opportunity with voice assistance
         </Text>
       </View>
+
+      {showBriefing && (
+        <DailyVoiceBriefing
+          userId="provider1"
+          onComplete={() => setShowBriefing(false)}
+        />
+      )}
 
       <View style={styles.categoriesSection}>
         <Text variant="h4" weight="semibold" style={styles.sectionTitle}>
@@ -106,6 +155,13 @@ export default function HomeScreen() {
           )}
         </ScrollView>
       </View>
+
+      <VoiceNotificationReader
+        notification={notification}
+        onDismiss={handleDismissNotification}
+        onReply={handleNotificationReply}
+        autoRead={true}
+      />
     </SafeAreaView>
   );
 }
@@ -118,6 +174,11 @@ const styles = StyleSheet.create({
   header: {
     padding: Layout.spacing.lg,
     backgroundColor: Colors.white,
+  },
+  titleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   title: {
     marginBottom: Layout.spacing.xs,
