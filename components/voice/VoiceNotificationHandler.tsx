@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Modal } from 'react-native';
 import { voiceService } from '../../utils/voiceService';
 import VoiceReplyInterface from './VoiceReplyInterface';
@@ -36,48 +36,29 @@ export const VoiceNotificationHandler: React.FC<VoiceNotificationHandlerProps> =
   const [flowState, setFlowState] = useState<VoiceFlowState>('reading-notification');
   const [recordedText, setRecordedText] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const mountedRef = useRef(true);
 
   useEffect(() => {
-    return () => {
-      mountedRef.current = false;
-    };
-  }, []);
-
-  const safeSetState = (setter: (value: any) => void, value: any) => {
-    if (mountedRef.current) {
-      setter(value);
-    }
-  };
-
-  useEffect(() => {
-    if (visible && (message || job) && mountedRef.current) {
+    if (visible && (message || job)) {
       startVoiceFlow();
     }
   }, [visible, message, job]);
 
   const startVoiceFlow = async () => {
     try {
-      safeSetState(setError, null);
-      safeSetState(setFlowState, 'reading-notification');
+      setError(null);
+      setFlowState('reading-notification');
       
       // Step 1: Read the notification
       const notificationText = getNotificationText();
       await voiceService.textToSpeech(notificationText);
       
-      if (!mountedRef.current) return;
-      
       // Step 2: Ask if they want to reply
-      safeSetState(setFlowState, 'asking-for-reply');
+      setFlowState('asking-for-reply');
       await voiceService.textToSpeech("Would you like to respond to this message?");
       
-      if (!mountedRef.current) return;
-      
       // Step 3: Wait for yes/no response
-      safeSetState(setFlowState, 'waiting-for-reply-decision');
+      setFlowState('waiting-for-reply-decision');
       const decision = await voiceService.speechToText();
-      
-      if (!mountedRef.current) return;
       
       if (isPositiveResponse(decision.transcript)) {
         await handleReplyFlow();
@@ -86,7 +67,7 @@ export const VoiceNotificationHandler: React.FC<VoiceNotificationHandlerProps> =
       }
     } catch (error) {
       console.error('Voice flow error:', error);
-      safeSetState(setError, 'Voice processing failed. Please try again.');
+      setError('Voice processing failed. Please try again.');
     }
   };
 
@@ -109,60 +90,42 @@ export const VoiceNotificationHandler: React.FC<VoiceNotificationHandlerProps> =
   const handleReplyFlow = async () => {
     try {
       // Step 4: Ask for their reply
-      safeSetState(setFlowState, 'recording-reply');
+      setFlowState('recording-reply');
       await voiceService.textToSpeech("Okay, I'm listening. What would you like to say?");
-      
-      if (!mountedRef.current) return;
       
       // Step 5: Record their reply
       const replyResult = await voiceService.speechToText();
-      safeSetState(setRecordedText, replyResult.transcript);
-      
-      if (!mountedRef.current) return;
+      setRecordedText(replyResult.transcript);
       
       // Step 6: Read back their reply
-      safeSetState(setFlowState, 'confirming-reply');
+      setFlowState('confirming-reply');
       await voiceService.textToSpeech(`You said: "${replyResult.transcript}". Are you happy with this message? Should I send it?`);
       
-      if (!mountedRef.current) return;
-      
       // Step 7: Wait for confirmation
-      safeSetState(setFlowState, 'waiting-for-confirmation');
+      setFlowState('waiting-for-confirmation');
       const confirmation = await voiceService.speechToText();
       
-      if (!mountedRef.current) return;
-      
       if (isPositiveResponse(confirmation.transcript)) {
-        safeSetState(setFlowState, 'sending');
+        setFlowState('sending');
         await voiceService.textToSpeech("Message sent successfully!");
         onReply?.(replyResult.transcript);
-        safeSetState(setFlowState, 'completed');
-        setTimeout(() => {
-          if (mountedRef.current) {
-            onDismiss?.();
-          }
-        }, 1000);
+        setFlowState('completed');
+        setTimeout(() => onDismiss?.(), 1000);
       } else {
         // Allow re-recording
         await voiceService.textToSpeech("Let's try again.");
-        if (mountedRef.current) {
-          await handleReplyFlow();
-        }
+        await handleReplyFlow();
       }
     } catch (error) {
       console.error('Reply flow error:', error);
-      safeSetState(setError, 'Failed to process your reply. Please try again.');
+      setError('Failed to process your reply. Please try again.');
     }
   };
 
   const handleDismiss = async () => {
-    safeSetState(setFlowState, 'cancelled');
+    setFlowState('cancelled');
     await voiceService.textToSpeech("Okay, no problem.");
-    setTimeout(() => {
-      if (mountedRef.current) {
-        onDismiss?.();
-      }
-    }, 1000);
+    setTimeout(() => onDismiss?.(), 1000);
   };
 
   const handleManualDismiss = () => {

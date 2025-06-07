@@ -37,12 +37,6 @@ class VoiceService {
 
   async textToSpeech(text: string): Promise<void> {
     try {
-      // Check if API key is available
-      if (!this.config.elevenLabsApiKey) {
-        console.warn('ElevenLabs API key not configured. Skipping text-to-speech.');
-        return;
-      }
-
       const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${this.config.voiceId}`, {
         method: 'POST',
         headers: {
@@ -94,14 +88,7 @@ class VoiceService {
 
       this.isListening = true;
 
-      const timeout = setTimeout(() => {
-        this.isListening = false;
-        this.recognition?.stop();
-        reject(new Error('Speech recognition timeout'));
-      }, 10000); // 10 second timeout
-
       this.recognition.onresult = (event: any) => {
-        clearTimeout(timeout);
         const result = event.results[0];
         const transcript = result[0].transcript;
         const confidence = result[0].confidence;
@@ -111,20 +98,17 @@ class VoiceService {
       };
 
       this.recognition.onerror = (event: any) => {
-        clearTimeout(timeout);
         this.isListening = false;
         reject(new Error(`Speech recognition error: ${event.error}`));
       };
 
       this.recognition.onend = () => {
-        clearTimeout(timeout);
         this.isListening = false;
       };
 
       try {
         this.recognition.start();
       } catch (error) {
-        clearTimeout(timeout);
         this.isListening = false;
         reject(error);
       }
@@ -151,10 +135,6 @@ class VoiceService {
 
   isSpeechRecognitionSupported(): boolean {
     return !!this.recognition;
-  }
-
-  isConfigured(): boolean {
-    return !!this.config.elevenLabsApiKey;
   }
 }
 

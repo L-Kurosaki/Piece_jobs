@@ -5,7 +5,11 @@ import {
   Poppins_600SemiBold,
   Poppins_700Bold,
 } from '@expo-google-fonts/poppins';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
+import { SplashScreen } from 'expo-router';
+
+// Keep the splash screen visible until fonts are loaded
+SplashScreen.preventAutoHideAsync();
 
 export function useLoadFonts() {
   const [fontsLoaded, error] = useFonts({
@@ -15,16 +19,12 @@ export function useLoadFonts() {
     'Poppins-Bold': Poppins_700Bold,
   });
 
-  const mountedRef = useRef(true);
-
+  // Hide the splash screen when fonts are loaded
   useEffect(() => {
-    return () => {
-      mountedRef.current = false;
-    };
-  }, []);
+    if (fontsLoaded || error) {
+      SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded, error]);
 
-  return { 
-    fontsLoaded: mountedRef.current ? fontsLoaded : false, 
-    error: mountedRef.current ? error : null 
-  };
+  return { fontsLoaded, error };
 }
