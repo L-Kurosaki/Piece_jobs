@@ -62,7 +62,7 @@ export const Input: React.FC<InputProps> = ({
   return (
     <View style={[styles.container, style]}>
       {label && (
-        <Text variant="label" weight="medium" style={styles.label}>
+        <Text variant="label\" weight="medium\" style={styles.label}>
           {label}
         </Text>
       )}
