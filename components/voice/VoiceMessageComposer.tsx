@@ -8,7 +8,7 @@ import VoiceAssistantButton from './VoiceAssistantButton';
 import Colors from '../../constants/Colors';
 import Layout from '../../constants/Layout';
 import { useVoiceAssistant } from '../../hooks/useVoiceAssistant';
-import { Send, Mic, Edit3, Check, X } from 'lucide-react-native';
+import { Send, Mic, CreditCard as Edit3, Check, X } from 'lucide-react-native';
 
 interface VoiceMessageComposerProps {
   onSendMessage: (message: string) => void;
