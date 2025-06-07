@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, Animated } from 'react-native';
-import { Mic, MicOff, Volume2, Loader2 } from 'lucide-react-native';
+import { Mic, MicOff, Volume2, Loader as Loader2 } from 'lucide-react-native';
 import Text from '../ui/Text';
 import Colors from '../../constants/Colors';
 import Layout from '../../constants/Layout';
