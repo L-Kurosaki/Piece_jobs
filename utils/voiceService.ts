@@ -94,7 +94,14 @@ class VoiceService {
 
       this.isListening = true;
 
+      const timeout = setTimeout(() => {
+        this.isListening = false;
+        this.recognition?.stop();
+        reject(new Error('Speech recognition timeout'));
+      }, 10000); // 10 second timeout
+
       this.recognition.onresult = (event: any) => {
+        clearTimeout(timeout);
         const result = event.results[0];
         const transcript = result[0].transcript;
         const confidence = result[0].confidence;
@@ -104,17 +111,20 @@ class VoiceService {
       };
 
       this.recognition.onerror = (event: any) => {
+        clearTimeout(timeout);
         this.isListening = false;
         reject(new Error(`Speech recognition error: ${event.error}`));
       };
 
       this.recognition.onend = () => {
+        clearTimeout(timeout);
         this.isListening = false;
       };
 
       try {
         this.recognition.start();
       } catch (error) {
+        clearTimeout(timeout);
         this.isListening = false;
         reject(error);
       }

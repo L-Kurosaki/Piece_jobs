@@ -20,6 +20,13 @@ export default function RootLayout() {
     return null;
   }
 
+  // Hide splash screen once fonts are loaded
+  useEffect(() => {
+    if (fontsLoaded || error) {
+      SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded, error]);
+
   return (
     <>
       <Stack screenOptions={{ headerShown: false }}>

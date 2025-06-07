@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 declare global {
   interface Window {
@@ -7,7 +7,12 @@ declare global {
 }
 
 export function useFrameworkReady() {
+  const hasCalledRef = useRef(false);
+  
   useEffect(() => {
-    window.frameworkReady?.();
-  }, []); // Add empty dependency array to prevent state updates on unmounted components
+    if (!hasCalledRef.current && typeof window !== 'undefined') {
+      hasCalledRef.current = true;
+      window.frameworkReady?.();
+    }
+  }, []);
 }
