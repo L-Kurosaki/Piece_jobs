@@ -15,7 +15,6 @@ import Layout from '../../../constants/Layout';
 import Text from '../../../components/ui/Text';
 import Avatar from '../../../components/ui/Avatar';
 import MessageItem from '../../../components/message/MessageItem';
-import VoiceMessageButton from '../../../components/voice/VoiceMessageButton';
 import { 
   getConversationById, 
   getMessagesByConversationId, 
@@ -65,9 +64,8 @@ export default function ConversationScreen() {
     }
   }, [id]);
 
-  const handleSendMessage = (messageText?: string) => {
-    const textToSend = messageText || newMessage;
-    if (textToSend.trim() === '') return;
+  const handleSendMessage = () => {
+    if (newMessage.trim() === '') return;
     
     // Create a new message
     const message: Message = {
@@ -75,7 +73,7 @@ export default function ConversationScreen() {
       conversationId: id,
       senderId: CURRENT_USER_ID,
       receiverId: otherUser?.id || '',
-      text: textToSend,
+      text: newMessage,
       timestamp: Date.now(),
       read: false,
     };
@@ -87,10 +85,6 @@ export default function ConversationScreen() {
     // In a real app, we would send the message to the API
   };
 
-  const handleVoiceReply = (replyText: string) => {
-    handleSendMessage(replyText);
-  };
-
   if (!conversation || !otherUser) {
     return (
       <SafeAreaView style={styles.loadingContainer}>
@@ -98,11 +92,6 @@ export default function ConversationScreen() {
       </SafeAreaView>
     );
   }
-
-  // Get the latest message from the other user for voice reply
-  const latestOtherMessage = messages
-    .filter(msg => msg.senderId !== CURRENT_USER_ID)
-    .sort((a, b) => b.timestamp - a.timestamp)[0];
 
   return (
     <SafeAreaView style={styles.container}>
@@ -139,17 +128,6 @@ export default function ConversationScreen() {
           <Info size={24} color={Colors.primary[500]} />
         </TouchableOpacity>
       </View>
-
-      {/* Voice Reply Button */}
-      {latestOtherMessage && (
-        <View style={styles.voiceReplyContainer}>
-          <VoiceMessageButton
-            message={latestOtherMessage}
-            job={relatedJob}
-            onReply={handleVoiceReply}
-          />
-        </View>
-      )}
       
       <FlatList
         data={messages}
@@ -187,7 +165,7 @@ export default function ConversationScreen() {
             styles.sendButton,
             newMessage.trim() === '' && styles.sendButtonDisabled
           ]}
-          onPress={() => handleSendMessage()}
+          onPress={handleSendMessage}
           disabled={newMessage.trim() === ''}
         >
           <Send size={20} color={newMessage.trim() === '' ? Colors.neutral[400] : Colors.white} />
@@ -243,13 +221,6 @@ const styles = StyleSheet.create({
   },
   infoButton: {
     padding: 4,
-  },
-  voiceReplyContainer: {
-    padding: Layout.spacing.md,
-    backgroundColor: Colors.neutral[50],
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.neutral[200],
-    alignItems: 'center',
   },
   messagesList: {
     padding: Layout.spacing.md,
