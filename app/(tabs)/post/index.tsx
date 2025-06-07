@@ -16,7 +16,6 @@ import Text from '../../../components/ui/Text';
 import Input from '../../../components/ui/Input';
 import Button from '../../../components/ui/Button';
 import LocationPicker from '../../../components/ui/LocationPicker';
-import VoiceJobDescriptionInput from '../../../components/voice/VoiceJobDescriptionInput';
 import { Camera, Upload, Clock, DollarSign, X, CircleCheck as CheckCircle2 } from 'lucide-react-native';
 import { JobCategory } from '../../../types/Job';
 
@@ -255,11 +254,14 @@ export default function PostJobScreen() {
               </View>
             </View>
 
-            <VoiceJobDescriptionInput
+            <Input
+              label="Description *"
               value={description}
               onChangeText={setDescription}
               placeholder="Describe the job in detail, including any specific requirements or preferences..."
-              label="Description *"
+              multiline
+              numberOfLines={4}
+              helper="The more details you provide, the better bids you'll receive"
             />
           </View>
 
@@ -336,9 +338,6 @@ export default function PostJobScreen() {
             <View style={styles.tipsList}>
               <Text variant="body2" color="secondary" style={styles.tipItem}>
                 • Upload clear, well-lit photos from multiple angles
-              </Text>
-              <Text variant="body2" color="secondary" style={styles.tipItem}>
-                • Use voice input for faster, more natural descriptions
               </Text>
               <Text variant="body2" color="secondary" style={styles.tipItem}>
                 • Be specific about your requirements and expectations

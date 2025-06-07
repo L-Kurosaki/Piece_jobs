@@ -4,6 +4,7 @@ import {
   StyleSheet, 
   SafeAreaView, 
   FlatList, 
+  TextInput, 
   TouchableOpacity, 
   KeyboardAvoidingView, 
   Platform 
@@ -14,7 +15,6 @@ import Layout from '../../../constants/Layout';
 import Text from '../../../components/ui/Text';
 import Avatar from '../../../components/ui/Avatar';
 import MessageItem from '../../../components/message/MessageItem';
-import VoiceMessageComposer from '../../../components/voice/VoiceMessageComposer';
 import { 
   getConversationById, 
   getMessagesByConversationId, 
@@ -22,7 +22,7 @@ import {
   getJobById 
 } from '../../../utils/mockData';
 import { Message } from '../../../types/Message';
-import { ChevronLeft, Info } from 'lucide-react-native';
+import { ChevronLeft, Send, Paperclip, Info } from 'lucide-react-native';
 
 // We'll assume the current user is user1 for this demo
 const CURRENT_USER_ID = 'user1';
@@ -31,6 +31,7 @@ export default function ConversationScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const [conversation, setConversation] = useState(null);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [newMessage, setNewMessage] = useState('');
   const [otherUser, setOtherUser] = useState(null);
   const [relatedJob, setRelatedJob] = useState(null);
 
@@ -63,8 +64,8 @@ export default function ConversationScreen() {
     }
   }, [id]);
 
-  const handleSendMessage = (messageText: string) => {
-    if (messageText.trim() === '') return;
+  const handleSendMessage = () => {
+    if (newMessage.trim() === '') return;
     
     // Create a new message
     const message: Message = {
@@ -72,13 +73,14 @@ export default function ConversationScreen() {
       conversationId: id,
       senderId: CURRENT_USER_ID,
       receiverId: otherUser?.id || '',
-      text: messageText,
+      text: newMessage,
       timestamp: Date.now(),
       read: false,
     };
     
     // Update messages
     setMessages([...messages, message]);
+    setNewMessage('');
     
     // In a real app, we would send the message to the API
   };
@@ -143,12 +145,31 @@ export default function ConversationScreen() {
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+        style={styles.inputContainer}
       >
-        <VoiceMessageComposer
-          onSendMessage={handleSendMessage}
+        <TouchableOpacity style={styles.attachButton}>
+          <Paperclip size={24} color={Colors.neutral[500]} />
+        </TouchableOpacity>
+        
+        <TextInput
+          style={styles.input}
+          value={newMessage}
+          onChangeText={setNewMessage}
           placeholder="Type your message..."
-          recipientName={otherUser.name}
+          placeholderTextColor={Colors.neutral[400]}
+          multiline
         />
+        
+        <TouchableOpacity 
+          style={[
+            styles.sendButton,
+            newMessage.trim() === '' && styles.sendButtonDisabled
+          ]}
+          onPress={handleSendMessage}
+          disabled={newMessage.trim() === ''}
+        >
+          <Send size={20} color={newMessage.trim() === '' ? Colors.neutral[400] : Colors.white} />
+        </TouchableOpacity>
       </KeyboardAvoidingView>
       
       {relatedJob && relatedJob.status === 'pending' && (
@@ -204,6 +225,39 @@ const styles = StyleSheet.create({
   messagesList: {
     padding: Layout.spacing.md,
     flexGrow: 1,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: Layout.spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: Colors.neutral[200],
+    backgroundColor: Colors.white,
+  },
+  attachButton: {
+    padding: Layout.spacing.sm,
+  },
+  input: {
+    flex: 1,
+    backgroundColor: Colors.neutral[100],
+    borderRadius: Layout.borderRadius.md,
+    padding: Layout.spacing.sm,
+    paddingHorizontal: Layout.spacing.md,
+    maxHeight: 100,
+    fontSize: 16,
+    fontFamily: 'Poppins-Regular',
+  },
+  sendButton: {
+    backgroundColor: Colors.primary[500],
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: Layout.spacing.sm,
+  },
+  sendButtonDisabled: {
+    backgroundColor: Colors.neutral[300],
   },
   footer: {
     flexDirection: 'row',
