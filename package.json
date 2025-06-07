@@ -4,9 +4,9 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "EXPO_NO_TELEMETRY=1 expo start",
-    "build:web": "expo export --platform web",
-    "lint": "expo lint"
+    "dev": "EXPO_NO_TELEMETRY=1 npx expo start",
+    "build:web": "npx expo export --platform web",
+    "lint": "npx expo lint"
   },
   "dependencies": {
     "@expo-google-fonts/poppins": "^0.2.3",
@@ -30,8 +30,8 @@
     "expo-system-ui": "~5.0.5",
     "expo-web-browser": "~14.1.5",
     "lucide-react-native": "^0.475.0",
-    "react": "19.0.0",
-    "react-dom": "19.0.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
     "react-native": "0.79.1",
     "react-native-gesture-handler": "~2.24.0",
     "react-native-reanimated": "~3.17.4",
@@ -45,6 +45,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
+    "@expo/cli": "^0.22.0",
     "@types/react": "~19.0.10",
     "typescript": "~5.8.3"
   }
