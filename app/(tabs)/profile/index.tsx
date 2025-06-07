@@ -10,7 +10,10 @@ import Card from '../../../components/ui/Card';
 import Badge from '../../../components/ui/Badge';
 import Divider from '../../../components/ui/Divider';
 import VerificationBadge from '../../../components/profile/VerificationBadge';
+import VoiceSettingsCard from '../../../components/voice/VoiceSettingsCard';
+import useVoiceNotifications from '../../../hooks/useVoiceNotifications';
 import { mockUsers } from '../../../utils/mockData';
+import { voiceService } from '../../../utils/voiceService';
 import { 
   Settings, 
   Star, 
@@ -30,6 +33,12 @@ const CURRENT_USER_ID = 'user1';
 
 export default function ProfileScreen() {
   const user = mockUsers.find(user => user.id === CURRENT_USER_ID);
+  const {
+    isVoiceEnabled,
+    enableVoice,
+    disableVoice,
+    isSpeechSupported,
+  } = useVoiceNotifications();
   
   if (!user) {
     return (
@@ -42,6 +51,22 @@ export default function ProfileScreen() {
   const formatDate = (timestamp: number) => {
     const date = new Date(timestamp);
     return `${date.toLocaleString('default', { month: 'long' })} ${date.getFullYear()}`;
+  };
+
+  const handleToggleVoice = (enabled: boolean) => {
+    if (enabled) {
+      enableVoice();
+    } else {
+      disableVoice();
+    }
+  };
+
+  const handleTestVoice = async () => {
+    try {
+      await voiceService.textToSpeech("Hello! This is a test of the voice assistant. Voice notifications are working perfectly!");
+    } catch (error) {
+      console.error('Voice test failed:', error);
+    }
   };
 
   return (
@@ -84,6 +109,14 @@ export default function ProfileScreen() {
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
+        {/* Voice Settings */}
+        <VoiceSettingsCard
+          isVoiceEnabled={isVoiceEnabled}
+          isSpeechSupported={isSpeechSupported}
+          onToggleVoice={handleToggleVoice}
+          onTestVoice={handleTestVoice}
+        />
+
         {/* Wallet Section */}
         <View style={styles.section}>
           <Card style={styles.walletCard} onPress={() => router.push('/profile/wallet')}>
