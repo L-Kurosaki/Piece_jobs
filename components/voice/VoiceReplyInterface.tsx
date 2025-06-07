@@ -5,15 +5,7 @@ import Button from '../ui/Button';
 import Card from '../ui/Card';
 import Colors from '../../constants/Colors';
 import Layout from '../../constants/Layout';
-import { 
-  Mic, 
-  MicOff, 
-  Volume2, 
-  MessageSquare, 
-  CheckCircle2, 
-  XCircle,
-  RotateCcw
-} from 'lucide-react-native';
+import { Mic, MicOff, Volume2, MessageSquare, CircleCheck as CheckCircle2, Circle as XCircle, RotateCcw } from 'lucide-react-native';
 
 type VoiceFlowState = 
   | 'reading-notification'
