@@ -7,7 +7,8 @@ import Text from '../../components/ui/Text';
 import Button from '../../components/ui/Button';
 import JobCard from '../../components/job/JobCard';
 import CategorySelector from '../../components/ui/CategorySelector';
-import { Briefcase, Search, Compass, Sparkles, CircleCheck as CheckCircle2 } from 'lucide-react-native';
+import VoiceTutorial from '../../components/voice/VoiceTutorial';
+import { Briefcase, Search, Compass, Sparkles, CircleCheck as CheckCircle2, Volume2 } from 'lucide-react-native';
 import { mockJobs } from '../../utils/mockData';
 import { JobCategory } from '../../types/Job';
 
@@ -42,6 +43,7 @@ const categories = [
 
 export default function HomeScreen() {
   const [selectedCategory, setSelectedCategory] = useState<JobCategory | null>(null);
+  const [showVoiceTutorial, setShowVoiceTutorial] = useState(true);
 
   // Filter jobs based on selected category
   const filteredJobs = selectedCategory
@@ -51,37 +53,49 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text variant="h2" weight="bold" style={styles.title}>PieceJob</Text>
-        <Text variant="body1" color="secondary" style={styles.subtitle}>
-          Find your next opportunity
-        </Text>
+        <View style={styles.titleRow}>
+          <View>
+            <Text variant="h2" weight="bold" style={styles.title}>PieceJob</Text>
+            <Text variant="body1" color="secondary" style={styles.subtitle}>
+              Find your next opportunity
+            </Text>
+          </View>
+          <Volume2 size={28} color={Colors.primary[500]} />
+        </View>
       </View>
 
-      <View style={styles.categoriesSection}>
-        <Text variant="h4" weight="semibold" style={styles.sectionTitle}>
-          Categories
-        </Text>
-        <CategorySelector
-          categories={categories}
-          selectedCategory={selectedCategory}
-          onSelectCategory={setSelectedCategory}
-        />
-      </View>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {/* Voice Tutorial Section */}
+        {showVoiceTutorial && (
+          <View style={styles.tutorialSection}>
+            <VoiceTutorial onComplete={() => setShowVoiceTutorial(false)} />
+          </View>
+        )}
 
-      <View style={styles.jobsSection}>
-        <View style={styles.sectionHeader}>
-          <Text variant="h4" weight="semibold">
-            {selectedCategory ? `${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)} Jobs` : 'Available Jobs'}
+        <View style={styles.categoriesSection}>
+          <Text variant="h4" weight="semibold" style={styles.sectionTitle}>
+            Categories
           </Text>
-          <Button
-            title="View All"
-            variant="ghost"
-            size="small"
-            onPress={() => router.push('/jobs')}
+          <CategorySelector
+            categories={categories}
+            selectedCategory={selectedCategory}
+            onSelectCategory={setSelectedCategory}
           />
         </View>
 
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={styles.jobsSection}>
+          <View style={styles.sectionHeader}>
+            <Text variant="h4" weight="semibold">
+              {selectedCategory ? `${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)} Jobs` : 'Available Jobs'}
+            </Text>
+            <Button
+              title="View All"
+              variant="ghost"
+              size="small"
+              onPress={() => router.push('/jobs')}
+            />
+          </View>
+
           {filteredJobs.map(job => (
             <JobCard
               key={job.id}
@@ -104,8 +118,8 @@ export default function HomeScreen() {
               />
             </View>
           )}
-        </ScrollView>
-      </View>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -119,11 +133,20 @@ const styles = StyleSheet.create({
     padding: Layout.spacing.lg,
     backgroundColor: Colors.white,
   },
+  titleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   title: {
     marginBottom: Layout.spacing.xs,
   },
   subtitle: {
     marginBottom: Layout.spacing.md,
+  },
+  tutorialSection: {
+    paddingHorizontal: Layout.spacing.lg,
+    paddingTop: Layout.spacing.md,
   },
   categoriesSection: {
     backgroundColor: Colors.white,

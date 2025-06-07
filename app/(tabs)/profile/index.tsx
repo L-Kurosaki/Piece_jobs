@@ -10,6 +10,8 @@ import Card from '../../../components/ui/Card';
 import Badge from '../../../components/ui/Badge';
 import Divider from '../../../components/ui/Divider';
 import VerificationBadge from '../../../components/profile/VerificationBadge';
+import DailySummaryVoice from '../../../components/voice/DailySummaryVoice';
+import VoiceTutorial from '../../../components/voice/VoiceTutorial';
 import { mockUsers } from '../../../utils/mockData';
 import { 
   Settings, 
@@ -22,7 +24,8 @@ import {
   Phone,
   Mail,
   Wallet,
-  ChevronRight
+  ChevronRight,
+  Volume2
 } from 'lucide-react-native';
 
 // We'll assume the current user is user1 for this demo
@@ -84,6 +87,19 @@ export default function ProfileScreen() {
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
+        {/* Voice Features Section */}
+        <View style={styles.section}>
+          <Text variant="h4" weight="semibold" style={styles.sectionTitle}>
+            🎤 Voice Assistant
+          </Text>
+          <DailySummaryVoice userId={CURRENT_USER_ID} />
+        </View>
+
+        {/* Voice Tutorial Section */}
+        <View style={styles.section}>
+          <VoiceTutorial onComplete={() => console.log('Tutorial completed')} />
+        </View>
+
         {/* Wallet Section */}
         <View style={styles.section}>
           <Card style={styles.walletCard} onPress={() => router.push('/profile/wallet')}>

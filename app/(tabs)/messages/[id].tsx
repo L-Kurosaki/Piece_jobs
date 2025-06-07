@@ -15,6 +15,7 @@ import Layout from '../../../constants/Layout';
 import Text from '../../../components/ui/Text';
 import Avatar from '../../../components/ui/Avatar';
 import MessageItem from '../../../components/message/MessageItem';
+import VoiceMessagePlayer from '../../../components/voice/VoiceMessagePlayer';
 import { 
   getConversationById, 
   getMessagesByConversationId, 
@@ -22,7 +23,7 @@ import {
   getJobById 
 } from '../../../utils/mockData';
 import { Message } from '../../../types/Message';
-import { ChevronLeft, Send, Paperclip, Info } from 'lucide-react-native';
+import { ChevronLeft, Send, Paperclip, Info, Volume2 } from 'lucide-react-native';
 
 // We'll assume the current user is user1 for this demo
 const CURRENT_USER_ID = 'user1';
@@ -34,6 +35,8 @@ export default function ConversationScreen() {
   const [newMessage, setNewMessage] = useState('');
   const [otherUser, setOtherUser] = useState(null);
   const [relatedJob, setRelatedJob] = useState(null);
+  const [showVoicePlayer, setShowVoicePlayer] = useState(false);
+  const [lastMessage, setLastMessage] = useState<Message | null>(null);
 
   useEffect(() => {
     if (id) {
@@ -45,6 +48,15 @@ export default function ConversationScreen() {
         // Get messages
         const conversationMessages = getMessagesByConversationId(id);
         setMessages(conversationMessages);
+        
+        // Set last message for voice player
+        if (conversationMessages.length > 0) {
+          const lastMsg = conversationMessages[conversationMessages.length - 1];
+          if (lastMsg.senderId !== CURRENT_USER_ID) {
+            setLastMessage(lastMsg);
+            setShowVoicePlayer(true);
+          }
+        }
         
         // Get other user
         const otherUserId = conversationData.participants.find(
@@ -81,8 +93,26 @@ export default function ConversationScreen() {
     // Update messages
     setMessages([...messages, message]);
     setNewMessage('');
+    setShowVoicePlayer(false);
     
     // In a real app, we would send the message to the API
+  };
+
+  const handleVoiceResponse = (responseText: string) => {
+    // Create a new message from voice response
+    const message: Message = {
+      id: `msg-${Date.now()}`,
+      conversationId: id,
+      senderId: CURRENT_USER_ID,
+      receiverId: otherUser?.id || '',
+      text: responseText,
+      timestamp: Date.now(),
+      read: false,
+    };
+    
+    // Update messages
+    setMessages([...messages, message]);
+    setShowVoicePlayer(false);
   };
 
   if (!conversation || !otherUser) {
@@ -124,10 +154,23 @@ export default function ConversationScreen() {
           </View>
         </TouchableOpacity>
         
-        <TouchableOpacity style={styles.infoButton}>
-          <Info size={24} color={Colors.primary[500]} />
+        <TouchableOpacity 
+          style={styles.voiceToggle}
+          onPress={() => setShowVoicePlayer(!showVoicePlayer)}
+        >
+          <Volume2 size={24} color={showVoicePlayer ? Colors.primary[500] : Colors.neutral[400]} />
         </TouchableOpacity>
       </View>
+
+      {/* Voice Message Player */}
+      {showVoicePlayer && lastMessage && (
+        <VoiceMessagePlayer
+          message={lastMessage.text}
+          senderName={otherUser.name}
+          onVoiceResponse={handleVoiceResponse}
+          showVoiceResponse={true}
+        />
+      )}
       
       <FlatList
         data={messages}
@@ -219,7 +262,7 @@ const styles = StyleSheet.create({
   nameContainer: {
     marginLeft: Layout.spacing.sm,
   },
-  infoButton: {
+  voiceToggle: {
     padding: 4,
   },
   messagesList: {
