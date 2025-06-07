@@ -8,9 +8,6 @@ import {
 import { useEffect } from 'react';
 import { SplashScreen } from 'expo-router';
 
-// Keep the splash screen visible until fonts are loaded
-SplashScreen.preventAutoHideAsync();
-
 export function useLoadFonts() {
   const [fontsLoaded, error] = useFonts({
     'Poppins-Regular': Poppins_400Regular,
