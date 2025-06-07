@@ -43,7 +43,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
         >
           {formatMessageTime()}
           {message.read && isOwnMessage && (
-            <Text variant="caption\" color="white"> · Read</Text>
+            <Text variant="caption" color="white"> · Read</Text>
           )}
         </Text>
       </View>
