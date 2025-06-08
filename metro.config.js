@@ -34,4 +34,15 @@ config.transformer.minifierConfig = {
   },
 };
 
+// Add transformer configuration to handle TypeScript files properly
+config.transformer.getTransformOptions = async () => ({
+  transform: {
+    experimentalImportSupport: false,
+    inlineRequires: true,
+  },
+});
+
+// Explicitly set the Babel transformer path
+config.transformer.babelTransformerPath = require.resolve('metro-react-native-babel-transformer');
+
 module.exports = config;
