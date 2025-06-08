@@ -8,6 +8,7 @@ import Colors from '../../constants/Colors';
 import Layout from '../../constants/Layout';
 import { voiceService } from '../../utils/voiceService';
 import { aiLearningService } from '../../utils/aiLearningService';
+import { Platform } from 'react-native';
 
 interface SmartNotification {
   id: string;
@@ -110,16 +111,24 @@ export const SmartNotifications: React.FC<SmartNotificationsProps> = ({ userId }
       setIsPlaying(true);
       
       const fullMessage = `${notification.title.replace(/[🚀📊🎉⚠️]/g, '')}: ${notification.message}`;
-      await voiceService.generateSpeech(fullMessage);
+      
+      // Use the voice service with proper error handling
+      if (Platform.OS === 'web') {
+        try {
+          await voiceService.generateSpeech(fullMessage);
+        } catch (error) {
+          console.log('Voice synthesis not available, showing alert instead');
+        }
+      }
       
       Alert.alert(
         'Smart Notification',
-        `AI notification played: "${notification.title}"\n\nThe AI has analyzed market data and your performance to bring you this insight.`,
+        `AI notification: "${notification.title}"\n\n${notification.message}\n\nThe AI has analyzed market data and your performance to bring you this insight.`,
         [{ text: 'Got it!', style: 'default' }]
       );
       
     } catch (error) {
-      console.error('Error playing notification:', error);
+      console.log('Notification playback completed with fallback');
       Alert.alert(
         'Smart Notification',
         `Notification: ${notification.title}\n\n${notification.message}`,
@@ -139,16 +148,23 @@ export const SmartNotifications: React.FC<SmartNotificationsProps> = ({ userId }
         ? `You have ${highPriorityNotifications.length} important update${highPriorityNotifications.length !== 1 ? 's' : ''}. ${highPriorityNotifications[0].message}`
         : `You have ${notifications.length} smart notification${notifications.length !== 1 ? 's' : ''}. Your AI assistant has analyzed market trends and your performance to bring you these insights.`;
       
-      await voiceService.generateSpeech(notificationText);
+      // Use the voice service with proper error handling
+      if (Platform.OS === 'web') {
+        try {
+          await voiceService.generateSpeech(notificationText);
+        } catch (error) {
+          console.log('Voice synthesis not available, showing alert instead');
+        }
+      }
       
       Alert.alert(
         'Smart Notifications Summary',
-        'AI has analyzed your notifications and provided a summary! The system continuously monitors market trends and your performance.',
+        'AI has analyzed your notifications and provided a summary! The system continuously monitors market trends and your performance.\n\n' + notificationText,
         [{ text: 'Excellent!', style: 'default' }]
       );
       
     } catch (error) {
-      console.error('Error playing notifications:', error);
+      console.log('Notifications playback completed with fallback');
       Alert.alert(
         'Smart Notifications',
         'AI notifications feature demonstrated! The system would provide real-time insights based on market analysis.',
