@@ -11,12 +11,15 @@ config.resolver.assetExts.push(
 // Add support for additional platforms
 config.resolver.platforms = ['native', 'web', 'ios', 'android'];
 
-// Ensure proper transformer configuration
+// Ensure proper transformer configuration for SDK 53
 config.transformer.minifierConfig = {
   keep_fnames: true,
   mangle: {
     keep_fnames: true,
   },
 };
+
+// Enable experimental features for SDK 53
+config.resolver.unstable_enablePackageExports = true;
 
 module.exports = config;

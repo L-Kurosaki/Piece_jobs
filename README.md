@@ -27,6 +27,7 @@ A revolutionary mobile-first job marketplace that connects customers with servic
 ## 🛠 Tech Stack
 
 - **Framework**: Expo Router with React Native
+- **SDK Version**: Expo SDK 53
 - **Language**: TypeScript
 - **Navigation**: Expo Router (file-based routing)
 - **Styling**: StyleSheet with custom design system
@@ -182,4 +183,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ---
 
-Built with ❤️ using Expo and React Native
+Built with ❤️ using Expo SDK 53 and React Native
