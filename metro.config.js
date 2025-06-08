@@ -2,40 +2,25 @@ const { getDefaultConfig } = require('expo/metro-config');
 
 const config = getDefaultConfig(__dirname);
 
-// Add TypeScript support
-config.resolver.sourceExts.push('ts', 'tsx');
+// Simplify resolver configuration
+config.resolver.sourceExts = ['js', 'jsx', 'json', 'tsx'];
 
-// Ensure proper asset extensions
+// Basic asset extensions
 config.resolver.assetExts.push('db');
 
-// Enable package exports for better module resolution
-config.resolver.unstable_enablePackageExports = true;
+// Remove problematic TypeScript configurations
+delete config.resolver.unstable_enablePackageExports;
+delete config.resolver.unstable_conditionNames;
 
-// Add condition names for better package resolution
-config.resolver.unstable_conditionNames = [
-  'react-native',
-  'browser',
-  'require',
-  'import'
-];
-
-// Configure transformer for TypeScript
+// Use default transformer
 config.transformer.babelTransformerPath = require.resolve('metro-react-native-babel-transformer');
 
-// Add TypeScript transform options
+// Simplified transform options
 config.transformer.getTransformOptions = async () => ({
   transform: {
     experimentalImportSupport: false,
-    inlineRequires: true,
+    inlineRequires: false,
   },
 });
-
-// Ensure proper minifier configuration
-config.transformer.minifierConfig = {
-  keep_fnames: true,
-  mangle: {
-    keep_fnames: true,
-  },
-};
 
 module.exports = config;
