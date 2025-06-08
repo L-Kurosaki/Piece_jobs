@@ -34,12 +34,4 @@ config.transformer.minifierConfig = {
   },
 };
 
-// Configure Babel transformer to handle TypeScript files
-config.transformer.getTransformOptions = async () => ({
-  transform: {
-    experimentalImportSupport: false,
-    inlineRequires: true,
-  },
-});
-
 module.exports = config;
