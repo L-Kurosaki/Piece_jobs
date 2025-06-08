@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Volume2, VolumeX, AlertCircle } from 'lucide-react-native';
+import { Volume2, VolumeX, CircleAlert as AlertCircle } from 'lucide-react-native';
 import Text from '../ui/Text';
 import Colors from '../../constants/Colors';
 import Layout from '../../constants/Layout';
