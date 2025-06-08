@@ -16,7 +16,7 @@ import Text from '../../../components/ui/Text';
 import Input from '../../../components/ui/Input';
 import Button from '../../../components/ui/Button';
 import LocationPicker from '../../../components/ui/LocationPicker';
-import { Camera, Upload, Clock, DollarSign, X, CircleCheck as CheckCircle2 } from 'lucide-react-native';
+import { Camera, Upload, Clock, Banknote, X, CircleCheck as CheckCircle2 } from 'lucide-react-native';
 import { JobCategory } from '../../../types/Job';
 
 // Categories for selection
@@ -311,7 +311,7 @@ export default function PostJobScreen() {
                   onChangeText={setMinBudget}
                   placeholder="200"
                   keyboardType="numeric"
-                  leftIcon={<DollarSign size={20} color={Colors.neutral[500]} />}
+                  leftIcon={<Banknote size={20} color={Colors.neutral[500]} />}
                   style={styles.budgetInput}
                 />
                 <Input
@@ -320,7 +320,7 @@ export default function PostJobScreen() {
                   onChangeText={setMaxBudget}
                   placeholder="400"
                   keyboardType="numeric"
-                  leftIcon={<DollarSign size={20} color={Colors.neutral[500]} />}
+                  leftIcon={<Banknote size={20} color={Colors.neutral[500]} />}
                   style={styles.budgetInput}
                 />
               </View>

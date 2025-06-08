@@ -31,6 +31,7 @@ interface InputProps {
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   editable?: boolean;
+  onSubmitEditing?: () => void;
 }
 
 export const Input: React.FC<InputProps> = ({
@@ -51,6 +52,7 @@ export const Input: React.FC<InputProps> = ({
   leftIcon,
   rightIcon,
   editable = true,
+  onSubmitEditing,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -62,7 +64,7 @@ export const Input: React.FC<InputProps> = ({
   return (
     <View style={[styles.container, style]}>
       {label && (
-        <Text variant="label\" weight="medium\" style={styles.label}>
+        <Text variant="label" weight="medium" style={styles.label}>
           {label}
         </Text>
       )}
@@ -91,6 +93,7 @@ export const Input: React.FC<InputProps> = ({
           maxLength={maxLength}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
+          onSubmitEditing={onSubmitEditing}
           style={[
             styles.input,
             leftIcon && styles.inputWithLeftIcon,

@@ -14,7 +14,7 @@ import { getJobById } from '../../../utils/mockData';
 import { Job } from '../../../types/Job';
 import { securityService } from '../../../utils/securityService';
 import { paymentService } from '../../../utils/paymentService';
-import { ChevronLeft, Shield, DollarSign } from 'lucide-react-native';
+import { ChevronLeft, Shield, Banknote } from 'lucide-react-native';
 
 export default function JobDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -158,7 +158,7 @@ export default function JobDetailScreen() {
               variant="ghost"
               size="small"
               onPress={() => setShowPaymentBreakdown(!showPaymentBreakdown)}
-              leftIcon={<DollarSign size={16} color={Colors.primary[500]} />}
+              leftIcon={<Banknote size={16} color={Colors.primary[500]} />}
             />
           </View>
         )}

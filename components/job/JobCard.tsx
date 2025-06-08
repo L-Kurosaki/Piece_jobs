@@ -8,7 +8,7 @@ import Avatar from '../ui/Avatar';
 import Button from '../ui/Button';
 import Layout from '../../constants/Layout';
 import Colors from '../../constants/Colors';
-import { MapPin, Clock, DollarSign, User, Calendar, Eye, MessageSquare } from 'lucide-react-native';
+import { MapPin, Clock, Banknote, User, Calendar, Eye, MessageSquare } from 'lucide-react-native';
 
 interface JobCardProps {
   job: Job;
@@ -20,15 +20,15 @@ export const JobCard: React.FC<JobCardProps> = ({ job, onPress, showBidButton = 
   const getStatusBadge = () => {
     switch (job.status) {
       case 'pending':
-        return <Badge label="Open for Bids\" variant="success" />;
+        return <Badge label="Open for Bids" variant="success" />;
       case 'accepted':
-        return <Badge label="Accepted\" variant="primary" />;
+        return <Badge label="Accepted" variant="primary" />;
       case 'in-progress':
-        return <Badge label="In Progress\" variant="primary" />;
+        return <Badge label="In Progress" variant="primary" />;
       case 'completed':
-        return <Badge label="Completed\" variant="neutral" />;
+        return <Badge label="Completed" variant="neutral" />;
       case 'cancelled':
-        return <Badge label="Cancelled\" variant="error" />;
+        return <Badge label="Cancelled" variant="error" />;
       default:
         return null;
     }
@@ -37,19 +37,19 @@ export const JobCard: React.FC<JobCardProps> = ({ job, onPress, showBidButton = 
   const getCategoryBadge = () => {
     switch (job.category) {
       case 'cleaning':
-        return <Badge label="Cleaning\" variant="secondary" />;
+        return <Badge label="Cleaning" variant="secondary" />;
       case 'gardening':
-        return <Badge label="Gardening\" variant="secondary" />;
+        return <Badge label="Gardening" variant="secondary" />;
       case 'maintenance':
-        return <Badge label="Maintenance\" variant="secondary" />;
+        return <Badge label="Maintenance" variant="secondary" />;
       case 'delivery':
-        return <Badge label="Delivery\" variant="secondary" />;
+        return <Badge label="Delivery" variant="secondary" />;
       case 'moving':
-        return <Badge label="Moving\" variant="secondary" />;
+        return <Badge label="Moving" variant="secondary" />;
       case 'cooking':
-        return <Badge label="Cooking\" variant="secondary" />;
+        return <Badge label="Cooking" variant="secondary" />;
       default:
-        return <Badge label="Other\" variant="secondary" />;
+        return <Badge label="Other" variant="secondary" />;
     }
   };
 
@@ -111,7 +111,7 @@ export const JobCard: React.FC<JobCardProps> = ({ job, onPress, showBidButton = 
           </View>
           
           <View style={styles.detailItem}>
-            <DollarSign size={16} color={Colors.primary[500]} />
+            <Banknote size={16} color={Colors.primary[500]} />
             <Text variant="body2" color="secondary" style={styles.detailText}>
               R{job.budget.min} - R{job.budget.max}
             </Text>

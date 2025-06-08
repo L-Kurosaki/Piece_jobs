@@ -10,7 +10,7 @@ import Card from '../../../../components/ui/Card';
 import JobDetailHeader from '../../../../components/job/JobDetailHeader';
 import { getJobById } from '../../../../utils/mockData';
 import { Job } from '../../../../types/Job';
-import { ChevronLeft, DollarSign, MessageSquare, Clock } from 'lucide-react-native';
+import { ChevronLeft, Banknote, MessageSquare, Clock } from 'lucide-react-native';
 
 export default function BidScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -133,7 +133,7 @@ export default function BidScreen() {
               onChangeText={setBidAmount}
               placeholder="e.g., 350"
               keyboardType="numeric"
-              leftIcon={<DollarSign size={20} color={Colors.neutral[500]} />}
+              leftIcon={<Banknote size={20} color={Colors.neutral[500]} />}
               helper={`Must be between R${job.budget.min} and R${job.budget.max}`}
             />
 

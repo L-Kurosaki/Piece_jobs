@@ -6,7 +6,7 @@ import Divider from '../ui/Divider';
 import Colors from '../../constants/Colors';
 import Layout from '../../constants/Layout';
 import { paymentService } from '../../utils/paymentService';
-import { DollarSign, Percent, CreditCard } from 'lucide-react-native';
+import { Banknote, Percent, CreditCard } from 'lucide-react-native';
 
 interface PaymentBreakdownProps {
   category: string;
@@ -24,7 +24,7 @@ export const PaymentBreakdown: React.FC<PaymentBreakdownProps> = ({
   return (
     <Card style={styles.card}>
       <View style={styles.header}>
-        <DollarSign size={20} color={Colors.primary[500]} />
+        <Banknote size={20} color={Colors.primary[500]} />
         <Text variant="h4" weight="semibold" style={styles.title}>
           Payment Breakdown
         </Text>
