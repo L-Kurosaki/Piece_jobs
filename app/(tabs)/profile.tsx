@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, SafeAreaView, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
-import { Settings, Star, Briefcase, Clock, Shield, LogOut, Edit, Phone, Mail, MapPin } from 'lucide-react-native';
+import { Settings, Star, Briefcase, Clock, Shield, LogOut, CreditCard as Edit, Phone, Mail, MapPin } from 'lucide-react-native';
 
 export default function ProfileScreen() {
   const user = {
