@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, FlatList, SafeAreaView } from 'react-native';
+import { View, StyleSheet, FlatList, SafeAreaView, Alert } from 'react-native';
 import { router } from 'expo-router';
 import Colors from '../../../constants/Colors';
 import Layout from '../../../constants/Layout';
 import Text from '../../../components/ui/Text';
 import Button from '../../../components/ui/Button';
 import Card from '../../../components/ui/Card';
-import { paymentService } from '../../../utils/paymentService';
-import { Wallet, Transaction } from '../../../types/Payment';
 import { 
   Wallet as WalletIcon, 
   TrendingUp, 
@@ -16,6 +14,26 @@ import {
   CreditCard,
   Banknote
 } from 'lucide-react-native';
+
+interface Wallet {
+  id: string;
+  userId: string;
+  balance: number;
+  currency: string;
+  status: string;
+  createdAt: number;
+  updatedAt: number;
+}
+
+interface Transaction {
+  id: string;
+  walletId: string;
+  type: 'credit' | 'debit';
+  amount: number;
+  description: string;
+  balanceAfter: number;
+  timestamp: number;
+}
 
 export default function WalletScreen() {
   const [wallet, setWallet] = useState<Wallet | null>(null);
@@ -28,8 +46,46 @@ export default function WalletScreen() {
 
   const loadWalletData = async () => {
     try {
-      const walletData = await paymentService.getWallet('user1');
-      const transactionData = await paymentService.getTransactionHistory('user1');
+      // Mock wallet data
+      const walletData: Wallet = {
+        id: 'wallet-user1',
+        userId: 'user1',
+        balance: 1250.50,
+        currency: 'ZAR',
+        status: 'active',
+        createdAt: Date.now() - 30 * 24 * 60 * 60 * 1000,
+        updatedAt: Date.now(),
+      };
+
+      const transactionData: Transaction[] = [
+        {
+          id: 'txn1',
+          walletId: 'wallet-user1',
+          type: 'credit',
+          amount: 400,
+          description: 'Payment for House Cleaning job',
+          balanceAfter: 1250.50,
+          timestamp: Date.now() - 2 * 60 * 60 * 1000,
+        },
+        {
+          id: 'txn2',
+          walletId: 'wallet-user1',
+          type: 'credit',
+          amount: 300,
+          description: 'Payment for Garden Maintenance',
+          balanceAfter: 850.50,
+          timestamp: Date.now() - 24 * 60 * 60 * 1000,
+        },
+        {
+          id: 'txn3',
+          walletId: 'wallet-user1',
+          type: 'debit',
+          amount: 50,
+          description: 'Withdrawal to bank account',
+          balanceAfter: 550.50,
+          timestamp: Date.now() - 3 * 24 * 60 * 60 * 1000,
+        },
+      ];
       
       setWallet(walletData);
       setTransactions(transactionData);
@@ -40,6 +96,14 @@ export default function WalletScreen() {
     }
   };
 
+  const handleGoBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.push('/(tabs)/profile');
+    }
+  };
+
   const formatCurrency = (amount: number) => {
     return `R${amount.toFixed(2)}`;
   };
@@ -47,6 +111,22 @@ export default function WalletScreen() {
   const formatDate = (timestamp: number) => {
     const date = new Date(timestamp);
     return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
+  const handleAddMoney = () => {
+    Alert.alert(
+      'Add Money',
+      'This feature would integrate with payment providers like PayFast or Stripe for South African users.',
+      [{ text: 'OK' }]
+    );
+  };
+
+  const handleWithdraw = () => {
+    Alert.alert(
+      'Withdraw Funds',
+      'This feature would allow withdrawal to your linked bank account.',
+      [{ text: 'OK' }]
+    );
   };
 
   const renderTransaction = ({ item }: { item: Transaction }) => (
@@ -97,7 +177,7 @@ export default function WalletScreen() {
         <Button
           title="Back"
           variant="ghost"
-          onPress={() => router.back()}
+          onPress={handleGoBack}
           leftIcon={<ChevronLeft size={20} color={Colors.primary[500]} />}
         />
         <Text variant="h3" weight="bold">Wallet</Text>
@@ -125,14 +205,14 @@ export default function WalletScreen() {
             <Button
               title="Add Money"
               variant="primary"
-              onPress={() => console.log('Add money')}
+              onPress={handleAddMoney}
               leftIcon={<CreditCard size={20} color={Colors.white} />}
               style={styles.actionButton}
             />
             <Button
               title="Withdraw"
               variant="outline"
-              onPress={() => console.log('Withdraw')}
+              onPress={handleWithdraw}
               leftIcon={<Banknote size={20} color={Colors.primary[500]} />}
               style={styles.actionButton}
             />
