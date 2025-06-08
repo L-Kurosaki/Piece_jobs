@@ -8,6 +8,9 @@ config.resolver.assetExts.push(
   'db'
 );
 
+// Add TypeScript extensions to source extensions
+config.resolver.sourceExts.push('ts', 'tsx');
+
 // Add support for additional platforms
 config.resolver.platforms = ['native', 'web', 'ios', 'android'];
 
