@@ -1,7 +1,7 @@
 import { Tabs } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import Colors from '../../constants/Colors';
-import { Home, Briefcase, Plus, MessageSquare, User } from 'lucide-react-native';
+import { Chrome as Home, Briefcase, Plus, MessageSquare, User } from 'lucide-react-native';
 import NotificationBadge from '../../components/ui/NotificationBadge';
 
 export default function TabLayout() {
