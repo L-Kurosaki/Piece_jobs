@@ -8,8 +8,8 @@ config.resolver.assetExts.push(
   'db'
 );
 
-// Add TypeScript extensions to source extensions
-config.resolver.sourceExts.push('ts', 'tsx');
+// Prioritize JavaScript extensions before TypeScript to prevent Node.js from loading raw TS files
+config.resolver.sourceExts = ['js', 'jsx', 'json', 'ts', 'tsx'];
 
 // Add support for additional platforms
 config.resolver.platforms = ['native', 'web', 'ios', 'android'];
