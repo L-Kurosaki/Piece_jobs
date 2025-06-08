@@ -1,7 +1,7 @@
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useFrameworkReady } from '@/hooks/useFrameworkReady';
-import { useFonts } from '@expo-google-fonts/poppins';
+import { useFonts } from 'expo-font';
 import {
   Poppins_400Regular,
   Poppins_500Medium,

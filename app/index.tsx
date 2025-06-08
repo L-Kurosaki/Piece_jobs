@@ -1,20 +1,16 @@
 import { useEffect } from 'react';
 import { router } from 'expo-router';
-import { useAuth } from '../hooks/useAuth';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 
 export default function Index() {
-  const { user, loading } = useAuth();
-
   useEffect(() => {
-    if (!loading) {
-      if (user) {
-        router.replace('/(tabs)');
-      } else {
-        router.replace('/(auth)/login');
-      }
-    }
-  }, [user, loading]);
+    // Redirect to tabs after a brief moment
+    const timer = setTimeout(() => {
+      router.replace('/(tabs)');
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <View style={styles.container}>
