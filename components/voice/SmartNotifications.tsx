@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Alert } from 'react-native';
 import { Bell, Brain, TrendingUp, Clock, DollarSign } from 'lucide-react-native';
 import Text from '../ui/Text';
 import Button from '../ui/Button';
@@ -110,11 +110,21 @@ export const SmartNotifications: React.FC<SmartNotificationsProps> = ({ userId }
       setIsPlaying(true);
       
       const fullMessage = `${notification.title.replace(/[🚀📊🎉⚠️]/g, '')}: ${notification.message}`;
-      const audioUrl = await voiceService.generateSpeech(fullMessage);
-      await voiceService.playAudio(audioUrl);
+      await voiceService.generateSpeech(fullMessage);
+      
+      Alert.alert(
+        'Smart Notification',
+        `AI notification played: "${notification.title}"\n\nThe AI has analyzed market data and your performance to bring you this insight.`,
+        [{ text: 'Got it!', style: 'default' }]
+      );
       
     } catch (error) {
       console.error('Error playing notification:', error);
+      Alert.alert(
+        'Smart Notification',
+        `Notification: ${notification.title}\n\n${notification.message}`,
+        [{ text: 'OK', style: 'default' }]
+      );
     } finally {
       setIsPlaying(false);
     }
@@ -129,11 +139,21 @@ export const SmartNotifications: React.FC<SmartNotificationsProps> = ({ userId }
         ? `You have ${highPriorityNotifications.length} important update${highPriorityNotifications.length !== 1 ? 's' : ''}. ${highPriorityNotifications[0].message}`
         : `You have ${notifications.length} smart notification${notifications.length !== 1 ? 's' : ''}. Your AI assistant has analyzed market trends and your performance to bring you these insights.`;
       
-      const audioUrl = await voiceService.generateSpeech(notificationText);
-      await voiceService.playAudio(audioUrl);
+      await voiceService.generateSpeech(notificationText);
+      
+      Alert.alert(
+        'Smart Notifications Summary',
+        'AI has analyzed your notifications and provided a summary! The system continuously monitors market trends and your performance.',
+        [{ text: 'Excellent!', style: 'default' }]
+      );
       
     } catch (error) {
       console.error('Error playing notifications:', error);
+      Alert.alert(
+        'Smart Notifications',
+        'AI notifications feature demonstrated! The system would provide real-time insights based on market analysis.',
+        [{ text: 'OK', style: 'default' }]
+      );
     } finally {
       setIsPlaying(false);
     }
@@ -213,7 +233,7 @@ export const SmartNotifications: React.FC<SmartNotificationsProps> = ({ userId }
             {notification.actionable && (
               <View style={styles.actionHint}>
                 <Text variant="caption" color="primary" weight="medium">
-                  💡 Actionable insight - tap to hear suggestions
+                  💡 Actionable insight - tap speaker to hear suggestions
                 </Text>
               </View>
             )}

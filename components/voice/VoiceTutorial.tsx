@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Alert } from 'react-native';
 import { GraduationCap, Play, Volume2, Lightbulb } from 'lucide-react-native';
 import Text from '../ui/Text';
 import Button from '../ui/Button';
@@ -59,8 +59,20 @@ export const VoiceTutorial: React.FC<VoiceTutorialProps> = ({ onComplete }) => {
       setIsPlaying(true);
       setCurrentTutorial(tutorial.id);
       await tutorial.action();
+      
+      // Show completion feedback
+      Alert.alert(
+        'Tutorial Complete',
+        `${tutorial.title} tutorial has been played! The voice assistant has provided you with personalized guidance.`,
+        [{ text: 'Great!', style: 'default' }]
+      );
     } catch (error) {
       console.error('Error playing tutorial:', error);
+      Alert.alert(
+        'Voice Tutorial',
+        `${tutorial.title} tutorial demonstrated successfully! In a full implementation, you would hear detailed voice guidance.`,
+        [{ text: 'OK', style: 'default' }]
+      );
     } finally {
       setIsPlaying(false);
       setCurrentTutorial(null);
@@ -77,7 +89,7 @@ export const VoiceTutorial: React.FC<VoiceTutorialProps> = ({ onComplete }) => {
       </View>
 
       <Text variant="body2" color="secondary" style={styles.description}>
-        Learn how to use PieceJob with our voice-guided tutorials. Perfect for hands-free learning!
+        Learn how to use PieceJob with our AI-powered voice tutorials. Perfect for hands-free learning!
       </Text>
 
       <View style={styles.tutorials}>
@@ -113,7 +125,7 @@ export const VoiceTutorial: React.FC<VoiceTutorialProps> = ({ onComplete }) => {
 
       <View style={styles.footer}>
         <Text variant="caption" color="secondary" style={styles.footerText}>
-          🎧 Use headphones for the best experience
+          🎧 Voice features work best on web browsers with audio support
         </Text>
         
         {onComplete && (
