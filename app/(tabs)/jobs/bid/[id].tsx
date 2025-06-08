@@ -24,11 +24,18 @@ export default function BidScreen() {
     }
   }, [id]);
 
+  const handleGoBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.push('/(tabs)/jobs');
+    }
+  };
+
   const handleSubmitBid = async (amount: number, message: string) => {
     setLoading(true);
 
     try {
-      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       Alert.alert(
@@ -45,14 +52,6 @@ export default function BidScreen() {
       Alert.alert('Error', 'Failed to submit bid. Please try again.');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleGoBack = () => {
-    if (router.canGoBack()) {
-      router.back();
-    } else {
-      router.push('/(tabs)/jobs');
     }
   };
 

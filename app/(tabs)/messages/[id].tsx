@@ -26,7 +26,6 @@ import {
 import { Message } from '../../../types/Message';
 import { ChevronLeft, Send, Paperclip, Volume2 } from 'lucide-react-native';
 
-// We'll assume the current user is user1 for this demo
 const CURRENT_USER_ID = 'user1';
 
 export default function ConversationScreen() {
@@ -41,16 +40,13 @@ export default function ConversationScreen() {
 
   useEffect(() => {
     if (id) {
-      // Get conversation data
       const conversationData = getConversationById(id);
       if (conversationData) {
         setConversation(conversationData);
         
-        // Get messages
         const conversationMessages = getMessagesByConversationId(id);
         setMessages(conversationMessages);
         
-        // Set last message for voice player
         if (conversationMessages.length > 0) {
           const lastMsg = conversationMessages[conversationMessages.length - 1];
           if (lastMsg.senderId !== CURRENT_USER_ID) {
@@ -59,7 +55,6 @@ export default function ConversationScreen() {
           }
         }
         
-        // Get other user
         const otherUserId = conversationData.participants.find(
           userId => userId !== CURRENT_USER_ID
         );
@@ -68,7 +63,6 @@ export default function ConversationScreen() {
           setOtherUser(userData);
         }
         
-        // Get related job if exists
         if (conversationData.jobId) {
           const jobData = getJobById(conversationData.jobId);
           setRelatedJob(jobData);
@@ -77,10 +71,17 @@ export default function ConversationScreen() {
     }
   }, [id]);
 
+  const handleGoBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.push('/(tabs)/messages');
+    }
+  };
+
   const handleSendMessage = () => {
     if (newMessage.trim() === '') return;
     
-    // Create a new message
     const message: Message = {
       id: `msg-${Date.now()}`,
       conversationId: id,
@@ -91,16 +92,12 @@ export default function ConversationScreen() {
       read: false,
     };
     
-    // Update messages
     setMessages([...messages, message]);
     setNewMessage('');
     setShowVoicePlayer(false);
-    
-    // In a real app, we would send the message to the API
   };
 
   const handleVoiceResponse = (responseText: string) => {
-    // Create a new message from voice response
     const message: Message = {
       id: `msg-${Date.now()}`,
       conversationId: id,
@@ -111,24 +108,14 @@ export default function ConversationScreen() {
       read: false,
     };
     
-    // Update messages
     setMessages([...messages, message]);
     setShowVoicePlayer(false);
     
-    // Show success feedback
     Alert.alert(
       'Voice Message Sent! 🎤',
       'Your voice message has been converted to text and sent successfully.',
       [{ text: 'Great!', style: 'default' }]
     );
-  };
-
-  const handleGoBack = () => {
-    if (router.canGoBack()) {
-      router.back();
-    } else {
-      router.push('/(tabs)/messages');
-    }
   };
 
   if (!conversation || !otherUser) {
@@ -178,7 +165,6 @@ export default function ConversationScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* Voice Message Player */}
       {showVoicePlayer && lastMessage && (
         <VoiceMessagePlayer
           message={lastMessage.text}

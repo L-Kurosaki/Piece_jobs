@@ -28,12 +28,19 @@ export default function JobDetailScreen() {
       setJob(jobData || null);
       setLoading(false);
 
-      // Start security timer if job is in progress
       if (jobData && jobData.status === 'in-progress' && jobData.startTime) {
         securityService.startJobTimer(jobData);
       }
     }
   }, [id]);
+
+  const handleGoBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.push('/(tabs)/jobs');
+    }
+  };
 
   const handleAcceptBid = async (bidId: string) => {
     if (!job) return;
@@ -42,14 +49,10 @@ export default function JobDetailScreen() {
     if (!bid) return;
 
     try {
-      // Calculate payment
       const payment = paymentService.calculatePayment(job, bid.price);
-      
-      // Process payment
       const paymentSuccess = await paymentService.processPayment(payment);
       
       if (paymentSuccess) {
-        // Update job status
         const updatedJob = { 
           ...job, 
           status: 'in-progress' as const,
@@ -58,8 +61,6 @@ export default function JobDetailScreen() {
           startTime: Date.now(),
         };
         setJob(updatedJob);
-        
-        // Start security monitoring
         securityService.startJobTimer(updatedJob);
       } else {
         alert('Payment processing failed. Please try again.');
@@ -78,13 +79,11 @@ export default function JobDetailScreen() {
       endTime: Date.now(),
     };
     setJob(updatedJob);
-    
-    // Stop security monitoring
     securityService.completeJob(job.id);
   };
 
   const handleContact = (providerId: string) => {
-    router.push(`/messages/${providerId}`);
+    router.push(`/(tabs)/messages/${providerId}`);
   };
 
   const handleTimerWarning = () => {
@@ -93,14 +92,6 @@ export default function JobDetailScreen() {
 
   const handleTimerOverdue = () => {
     alert('Job has exceeded maximum duration. Security services have been automatically notified for your safety.');
-  };
-
-  const handleGoBack = () => {
-    if (router.canGoBack()) {
-      router.back();
-    } else {
-      router.push('/(tabs)/jobs');
-    }
   };
 
   if (loading) {
@@ -141,7 +132,6 @@ export default function JobDetailScreen() {
       <ScrollView>
         <JobDetailHeader job={job} />
         
-        {/* Job Timer for in-progress jobs */}
         {job.status === 'in-progress' && job.startTime && (
           <View style={styles.content}>
             <JobTimer
@@ -153,7 +143,6 @@ export default function JobDetailScreen() {
           </View>
         )}
 
-        {/* Payment Breakdown */}
         {acceptedBid && (
           <View style={styles.content}>
             <PaymentBreakdown
@@ -196,7 +185,6 @@ export default function JobDetailScreen() {
             )}
           </View>
 
-          {/* Emergency Button for active jobs */}
           {(job.status === 'in-progress' || job.status === 'accepted') && (
             <View style={styles.section}>
               <View style={styles.emergencySection}>
@@ -209,7 +197,7 @@ export default function JobDetailScreen() {
                 Your safety is our priority. Use the emergency button if you feel unsafe or need immediate assistance.
               </Text>
               <EmergencyButton
-                userId="user1" // In a real app, this would come from auth context
+                userId="user1"
                 currentLocation={{
                   latitude: job.location.latitude,
                   longitude: job.location.longitude,
@@ -220,13 +208,12 @@ export default function JobDetailScreen() {
         </View>
       </ScrollView>
       
-      {/* Action Buttons */}
       {job.status === 'pending' && job.bids.length === 0 && (
         <View style={styles.footer}>
           <Button
             title="Place a Bid"
             variant="primary"
-            onPress={() => console.log('Place bid')}
+            onPress={() => router.push(`/(tabs)/jobs/bid/${job.id}`)}
             fullWidth
           />
         </View>
