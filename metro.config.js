@@ -14,6 +14,18 @@ config.resolver.sourceExts.push('ts', 'tsx');
 // Add support for additional platforms
 config.resolver.platforms = ['native', 'web', 'ios', 'android'];
 
+// Enable experimental features for SDK 53
+config.resolver.unstable_enablePackageExports = true;
+
+// Add condition names to help Metro resolve package entry points correctly
+config.resolver.unstable_conditionNames = [
+  'require',
+  'import',
+  'react-native',
+  'browser',
+  'default',
+];
+
 // Ensure proper transformer configuration for SDK 53
 config.transformer.minifierConfig = {
   keep_fnames: true,
@@ -29,8 +41,5 @@ config.transformer.getTransformOptions = async () => ({
     inlineRequires: true,
   },
 });
-
-// Enable experimental features for SDK 53
-config.resolver.unstable_enablePackageExports = true;
 
 module.exports = config;
