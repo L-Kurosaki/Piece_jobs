@@ -22,6 +22,14 @@ config.transformer.minifierConfig = {
   },
 };
 
+// Configure Babel transformer to handle TypeScript files
+config.transformer.getTransformOptions = async () => ({
+  transform: {
+    experimentalImportSupport: false,
+    inlineRequires: true,
+  },
+});
+
 // Enable experimental features for SDK 53
 config.resolver.unstable_enablePackageExports = true;
 
