@@ -1,4 +1,5 @@
 import { Platform } from 'react-native';
+import config from './config';
 
 export interface VoiceMessage {
   id: string;
@@ -21,14 +22,14 @@ class VoiceService {
   private voiceId = 'pNInz6obpgDQGcFmaJgB';
   
   constructor() {
-    this.apiKey = 'sk_8dacedb595d18b1ecfc3fd01e104e0c79cf315fa4bb67daa';
+    this.apiKey = config.elevenlabsApiKey;
   }
 
   // Generate speech from text (Web only to prevent blob errors)
   async generateSpeech(text: string, voiceId?: string): Promise<string> {
     // Always return mock for non-web platforms to prevent blob errors
-    if (Platform.OS !== 'web') {
-      console.log('Voice synthesis (mobile simulation):', text);
+    if (Platform.OS !== 'web' || !this.apiKey) {
+      console.log('Voice synthesis (simulation):', text);
       return 'mock-audio-url';
     }
 
@@ -41,7 +42,7 @@ class VoiceService {
           'xi-api-key': this.apiKey,
         },
         body: JSON.stringify({
-          text,
+          text: text.substring(0, 500), // Limit text length for API
           model_id: 'eleven_monolingual_v1',
           voice_settings: {
             stability: 0.5,
