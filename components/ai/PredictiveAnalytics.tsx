@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Dimensions } from 'react-native';
-import { BarChart3, TrendingUp, DollarSign, Calendar, Target } from 'lucide-react-native';
+import { ChartBar as BarChart3, TrendingUp, DollarSign, Calendar, Target } from 'lucide-react-native';
 import Text from '../ui/Text';
 import Button from '../ui/Button';
 import Card from '../ui/Card';
