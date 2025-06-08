@@ -7,7 +7,6 @@ module.exports = function (api) {
     plugins: [
       // Required for proper interop handling
       '@babel/plugin-transform-export-namespace-from',
-      '@babel/plugin-transform-modules-commonjs',
       // Reanimated plugin (should be last)
       'react-native-reanimated/plugin',
     ],

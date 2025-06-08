@@ -2,39 +2,27 @@ const { getDefaultConfig } = require('expo/metro-config');
 
 const config = getDefaultConfig(__dirname);
 
-// Ensure proper resolver configuration
-config.resolver.assetExts.push(
-  // Adds support for `.db` files for SQLite databases
-  'db'
-);
+// Add TypeScript support
+config.resolver.sourceExts.push('ts', 'tsx');
 
-// Prioritize JavaScript extensions before TypeScript to prevent Node.js from loading raw TS files
-config.resolver.sourceExts = ['js', 'jsx', 'json', 'ts', 'tsx'];
+// Ensure proper asset extensions
+config.resolver.assetExts.push('db');
 
-// Add support for additional platforms
-config.resolver.platforms = ['native', 'web', 'ios', 'android'];
-
-// Enable experimental features for SDK 53
+// Enable package exports for better module resolution
 config.resolver.unstable_enablePackageExports = true;
 
-// Add condition names to help Metro resolve package entry points correctly
+// Add condition names for better package resolution
 config.resolver.unstable_conditionNames = [
-  'require',
-  'import',
   'react-native',
   'browser',
-  'default',
+  'require',
+  'import'
 ];
 
-// Ensure proper transformer configuration for SDK 53
-config.transformer.minifierConfig = {
-  keep_fnames: true,
-  mangle: {
-    keep_fnames: true,
-  },
-};
+// Configure transformer for TypeScript
+config.transformer.babelTransformerPath = require.resolve('metro-react-native-babel-transformer');
 
-// Add transformer configuration to handle TypeScript files properly
+// Add TypeScript transform options
 config.transformer.getTransformOptions = async () => ({
   transform: {
     experimentalImportSupport: false,
@@ -42,7 +30,12 @@ config.transformer.getTransformOptions = async () => ({
   },
 });
 
-// Explicitly set the Babel transformer path
-config.transformer.babelTransformerPath = require.resolve('metro-react-native-babel-transformer');
+// Ensure proper minifier configuration
+config.transformer.minifierConfig = {
+  keep_fnames: true,
+  mangle: {
+    keep_fnames: true,
+  },
+};
 
 module.exports = config;
