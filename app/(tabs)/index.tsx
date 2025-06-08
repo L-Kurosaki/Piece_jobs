@@ -8,6 +8,7 @@ import Button from '../../components/ui/Button';
 import JobCard from '../../components/job/JobCard';
 import CategorySelector from '../../components/ui/CategorySelector';
 import VoiceTutorial from '../../components/voice/VoiceTutorial';
+import VoiceStatus from '../../components/voice/VoiceStatus';
 import AIJobMatcher from '../../components/ai/AIJobMatcher';
 import MarketIntelligence from '../../components/ai/MarketIntelligence';
 import { Briefcase, Search, Compass, Sparkles, CircleCheck as CheckCircle2, Volume2, Brain, TrendingUp } from 'lucide-react-native';
@@ -54,7 +55,7 @@ export default function HomeScreen() {
     : mockJobs;
 
   const handleAIJobSelect = (job: any) => {
-    router.push(`/jobs/bid/${job.id}`);
+    router.push(`/(tabs)/jobs/bid/${job.id}`);
   };
 
   return (
@@ -68,6 +69,7 @@ export default function HomeScreen() {
             </Text>
           </View>
           <View style={styles.headerIcons}>
+            <VoiceStatus />
             <Button
               title=""
               variant="ghost"
@@ -75,7 +77,6 @@ export default function HomeScreen() {
               onPress={() => setShowAIFeatures(!showAIFeatures)}
               leftIcon={<Brain size={24} color={showAIFeatures ? Colors.primary[500] : Colors.neutral[400]} />}
             />
-            <Volume2 size={28} color={Colors.primary[500]} />
           </View>
         </View>
       </View>
@@ -129,7 +130,7 @@ export default function HomeScreen() {
               title="View All"
               variant="ghost"
               size="small"
-              onPress={() => router.push('/jobs')}
+              onPress={() => router.push('/(tabs)/jobs')}
               leftIcon={<TrendingUp size={16} color={Colors.primary[500]} />}
             />
           </View>
@@ -138,7 +139,7 @@ export default function HomeScreen() {
             <JobCard
               key={job.id}
               job={job}
-              onPress={() => router.push(`/jobs/${job.id}`)}
+              onPress={() => router.push(`/(tabs)/jobs/${job.id}`)}
             />
           ))}
 
@@ -162,7 +163,7 @@ export default function HomeScreen() {
               <Button
                 title={`View All ${filteredJobs.length} Jobs`}
                 variant="primary"
-                onPress={() => router.push('/jobs')}
+                onPress={() => router.push('/(tabs)/jobs')}
                 fullWidth
               />
             </View>
@@ -190,6 +191,7 @@ const styles = StyleSheet.create({
   headerIcons: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: Layout.spacing.sm,
   },
   title: {
     marginBottom: Layout.spacing.xs,

@@ -25,10 +25,15 @@ class VoiceService {
     this.apiKey = config.elevenlabsApiKey;
   }
 
-  // Generate speech from text (Web only to prevent blob errors)
+  // Check if voice features are available
+  isVoiceAvailable(): boolean {
+    return Platform.OS === 'web' && !!this.apiKey;
+  }
+
+  // Generate speech from text using ElevenLabs
   async generateSpeech(text: string, voiceId?: string): Promise<string> {
-    // Always return mock for non-web platforms to prevent blob errors
-    if (Platform.OS !== 'web' || !this.apiKey) {
+    // Return mock for non-web platforms or missing API key
+    if (!this.isVoiceAvailable()) {
       console.log('Voice synthesis (simulation):', text);
       return 'mock-audio-url';
     }
@@ -42,7 +47,7 @@ class VoiceService {
           'xi-api-key': this.apiKey,
         },
         body: JSON.stringify({
-          text: text.substring(0, 500), // Limit text length for API
+          text: text.substring(0, 500), // Limit text length
           model_id: 'eleven_monolingual_v1',
           voice_settings: {
             stability: 0.5,
@@ -69,7 +74,7 @@ class VoiceService {
   // Play audio using platform-appropriate method
   async playAudio(audioUrl: string): Promise<void> {
     return new Promise((resolve) => {
-      if (Platform.OS === 'web' && audioUrl !== 'mock-audio-url') {
+      if (this.isVoiceAvailable() && audioUrl !== 'mock-audio-url') {
         try {
           const audio = new Audio(audioUrl);
           audio.onended = () => resolve();
@@ -92,7 +97,7 @@ class VoiceService {
     });
   }
 
-  // Read message aloud
+  // Read message aloud with ElevenLabs
   async readMessageAloud(message: string, senderName: string): Promise<void> {
     try {
       const fullText = `New message from ${senderName}: ${message}`;
@@ -264,6 +269,17 @@ class VoiceService {
       console.log('Voice interaction completed with fallback');
       return null;
     }
+  }
+
+  // Get voice status for UI
+  getVoiceStatus(): { available: boolean; reason?: string } {
+    if (!this.apiKey) {
+      return { available: false, reason: 'API key not configured' };
+    }
+    if (Platform.OS !== 'web') {
+      return { available: false, reason: 'Voice features work best on web' };
+    }
+    return { available: true };
   }
 }
 
