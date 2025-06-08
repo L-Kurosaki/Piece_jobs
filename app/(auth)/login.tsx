@@ -6,20 +6,21 @@ import {
   KeyboardAvoidingView, 
   Platform,
   Alert,
-  Image
+  Image,
+  TextInput,
+  TouchableOpacity,
+  ActivityIndicator
 } from 'react-native';
 import { router } from 'expo-router';
-import Colors from '../../constants/Colors';
-import Layout from '../../constants/Layout';
-import Text from '../../components/ui/Text';
-import Input from '../../components/ui/Input';
-import Button from '../../components/ui/Button';
-import { Mail, Lock, Eye } from 'lucide-react-native';
+import { useAuth } from '../../hooks/useAuth';
+import { Mail, Lock, Eye, EyeOff } from 'lucide-react-native';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { signIn } = useAuth();
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -30,22 +31,10 @@ export default function LoginScreen() {
     setLoading(true);
     
     try {
-      // Simulate login API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // For demo purposes, accept any email/password
-      Alert.alert(
-        'Login Successful! 🎉',
-        'Welcome to PieceJob! You can now access all features including AI-powered job matching and voice assistance.',
-        [
-          {
-            text: 'Get Started',
-            onPress: () => router.replace('/(tabs)')
-          }
-        ]
-      );
-    } catch (error) {
-      Alert.alert('Login Failed', 'Please check your credentials and try again.');
+      await signIn(email, password);
+      router.replace('/(tabs)');
+    } catch (error: any) {
+      Alert.alert('Login Failed', error.message || 'Please check your credentials and try again.');
     } finally {
       setLoading(false);
     }
@@ -63,67 +52,75 @@ export default function LoginScreen() {
               source={{ uri: 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=400' }}
               style={styles.logo}
             />
-            <Text variant="h2" weight="bold" style={styles.title}>
-              Welcome to PieceJob
-            </Text>
-            <Text variant="body1" color="secondary" style={styles.subtitle}>
-              AI-Powered Job Marketplace
-            </Text>
+            <Text style={styles.title}>Welcome to PieceJob</Text>
+            <Text style={styles.subtitle}>AI-Powered Job Marketplace</Text>
           </View>
 
           <View style={styles.form}>
-            <Input
-              label="Email Address"
-              value={email}
-              onChangeText={setEmail}
-              placeholder="Enter your email"
-              keyboardType="email-address"
-              autoCapitalize="none"
-              leftIcon={<Mail size={20} color={Colors.neutral[500]} />}
-            />
+            <View style={styles.inputContainer}>
+              <Mail size={20} color="#666" style={styles.inputIcon} />
+              <TextInput
+                style={styles.input}
+                value={email}
+                onChangeText={setEmail}
+                placeholder="Enter your email"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                placeholderTextColor="#999"
+              />
+            </View>
 
-            <Input
-              label="Password"
-              value={password}
-              onChangeText={setPassword}
-              placeholder="Enter your password"
-              secureTextEntry
-              leftIcon={<Lock size={20} color={Colors.neutral[500]} />}
-            />
+            <View style={styles.inputContainer}>
+              <Lock size={20} color="#666" style={styles.inputIcon} />
+              <TextInput
+                style={styles.input}
+                value={password}
+                onChangeText={setPassword}
+                placeholder="Enter your password"
+                secureTextEntry={!showPassword}
+                placeholderTextColor="#999"
+              />
+              <TouchableOpacity 
+                onPress={() => setShowPassword(!showPassword)}
+                style={styles.eyeIcon}
+              >
+                {showPassword ? (
+                  <EyeOff size={20} color="#666" />
+                ) : (
+                  <Eye size={20} color="#666" />
+                )}
+              </TouchableOpacity>
+            </View>
 
-            <Button
-              title={loading ? "Signing In..." : "Sign In"}
-              variant="primary"
+            <TouchableOpacity
+              style={[styles.loginButton, loading && styles.loginButtonDisabled]}
               onPress={handleLogin}
-              loading={loading}
-              fullWidth
-              style={styles.loginButton}
-            />
+              disabled={loading}
+            >
+              {loading ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text style={styles.loginButtonText}>Sign In</Text>
+              )}
+            </TouchableOpacity>
 
-            <Button
-              title="Forgot Password?"
-              variant="ghost"
+            <TouchableOpacity
               onPress={() => router.push('/(auth)/forgot-password')}
               style={styles.forgotButton}
-            />
+            >
+              <Text style={styles.forgotButtonText}>Forgot Password?</Text>
+            </TouchableOpacity>
           </View>
 
           <View style={styles.footer}>
-            <Text variant="body2" color="secondary">
+            <Text style={styles.footerText}>
               Don't have an account?{' '}
             </Text>
-            <Button
-              title="Sign Up"
-              variant="ghost"
+            <TouchableOpacity
               onPress={() => router.push('/(auth)/register')}
-              style={styles.signUpButton}
-            />
-          </View>
-
-          <View style={styles.demoInfo}>
-            <Text variant="caption" color="secondary" style={styles.demoText}>
-              Demo: Use any email and password to login
-            </Text>
+            >
+              <Text style={styles.signUpText}>Sign Up</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </KeyboardAvoidingView>
@@ -131,63 +128,113 @@ export default function LoginScreen() {
   );
 }
 
+const Text = ({ children, style, ...props }: any) => (
+  <text style={[{ fontFamily: 'Poppins-Regular', color: '#333' }, style]} {...props}>
+    {children}
+  </text>
+);
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.white,
+    backgroundColor: '#fff',
   },
   keyboardView: {
     flex: 1,
   },
   content: {
     flex: 1,
-    padding: Layout.spacing.lg,
+    padding: 24,
     justifyContent: 'center',
   },
   header: {
     alignItems: 'center',
-    marginBottom: Layout.spacing.xl * 2,
+    marginBottom: 48,
   },
   logo: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    marginBottom: Layout.spacing.lg,
+    marginBottom: 24,
   },
   title: {
-    marginBottom: Layout.spacing.xs,
+    fontSize: 28,
+    fontFamily: 'Poppins-Bold',
+    color: '#0077B6',
+    marginBottom: 8,
     textAlign: 'center',
   },
   subtitle: {
+    fontSize: 16,
+    fontFamily: 'Poppins-Regular',
+    color: '#666',
     textAlign: 'center',
   },
   form: {
-    marginBottom: Layout.spacing.xl,
+    marginBottom: 32,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    marginBottom: 16,
+    backgroundColor: '#f9f9f9',
+  },
+  inputIcon: {
+    marginRight: 12,
+  },
+  input: {
+    flex: 1,
+    height: 50,
+    fontSize: 16,
+    fontFamily: 'Poppins-Regular',
+    color: '#333',
+  },
+  eyeIcon: {
+    padding: 4,
   },
   loginButton: {
-    marginTop: Layout.spacing.lg,
+    backgroundColor: '#0077B6',
+    borderRadius: 12,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  loginButtonDisabled: {
+    backgroundColor: '#ccc',
+  },
+  loginButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontFamily: 'Poppins-SemiBold',
   },
   forgotButton: {
     alignSelf: 'center',
-    marginTop: Layout.spacing.md,
+    marginTop: 16,
+    padding: 8,
+  },
+  forgotButtonText: {
+    color: '#0077B6',
+    fontSize: 14,
+    fontFamily: 'Poppins-Medium',
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  signUpButton: {
-    paddingHorizontal: 0,
+  footerText: {
+    fontSize: 14,
+    fontFamily: 'Poppins-Regular',
+    color: '#666',
   },
-  demoInfo: {
-    marginTop: Layout.spacing.xl,
-    padding: Layout.spacing.md,
-    backgroundColor: Colors.primary[50],
-    borderRadius: Layout.borderRadius.md,
-    alignItems: 'center',
-  },
-  demoText: {
-    textAlign: 'center',
-    fontStyle: 'italic',
+  signUpText: {
+    fontSize: 14,
+    fontFamily: 'Poppins-SemiBold',
+    color: '#0077B6',
   },
 });

@@ -6,15 +6,14 @@ import {
   KeyboardAvoidingView, 
   Platform,
   Alert,
-  ScrollView
+  ScrollView,
+  TextInput,
+  TouchableOpacity,
+  ActivityIndicator
 } from 'react-native';
 import { router } from 'expo-router';
-import Colors from '../../constants/Colors';
-import Layout from '../../constants/Layout';
-import Text from '../../components/ui/Text';
-import Input from '../../components/ui/Input';
-import Button from '../../components/ui/Button';
-import { User, Mail, Lock, Phone, MapPin } from 'lucide-react-native';
+import { useAuth } from '../../hooks/useAuth';
+import { User, Mail, Lock, Phone, MapPin, Eye, EyeOff } from 'lucide-react-native';
 
 export default function RegisterScreen() {
   const [formData, setFormData] = useState({
@@ -25,7 +24,10 @@ export default function RegisterScreen() {
     confirmPassword: '',
     location: '',
   });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { signUp } = useAuth();
 
   const updateField = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -52,21 +54,25 @@ export default function RegisterScreen() {
     setLoading(true);
     
     try {
-      // Simulate registration API call
-      await new Promise(resolve => setTimeout(resolve, 2500));
+      await signUp(formData.email, formData.password, {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        location: JSON.stringify({ address: formData.location }),
+      });
       
       Alert.alert(
         'Registration Successful! 🎉',
-        'Welcome to PieceJob! Your account has been created. You can now start finding jobs or offering your services.',
+        'Welcome to PieceJob! Please check your email to verify your account.',
         [
           {
-            text: 'Get Started',
-            onPress: () => router.replace('/(tabs)')
+            text: 'OK',
+            onPress: () => router.replace('/(auth)/login')
           }
         ]
       );
-    } catch (error) {
-      Alert.alert('Registration Failed', 'Please try again later.');
+    } catch (error: any) {
+      Alert.alert('Registration Failed', error.message || 'Please try again later.');
     } finally {
       setLoading(false);
     }
@@ -80,88 +86,124 @@ export default function RegisterScreen() {
       >
         <ScrollView contentContainerStyle={styles.scrollContent}>
           <View style={styles.header}>
-            <Text variant="h2" weight="bold" style={styles.title}>
-              Join PieceJob
-            </Text>
-            <Text variant="body1" color="secondary" style={styles.subtitle}>
-              Create your account to get started
-            </Text>
+            <Text style={styles.title}>Join PieceJob</Text>
+            <Text style={styles.subtitle}>Create your account to get started</Text>
           </View>
 
           <View style={styles.form}>
-            <Input
-              label="Full Name"
-              value={formData.name}
-              onChangeText={(value) => updateField('name', value)}
-              placeholder="Enter your full name"
-              leftIcon={<User size={20} color={Colors.neutral[500]} />}
-            />
+            <View style={styles.inputContainer}>
+              <User size={20} color="#666" style={styles.inputIcon} />
+              <TextInput
+                style={styles.input}
+                value={formData.name}
+                onChangeText={(value) => updateField('name', value)}
+                placeholder="Enter your full name"
+                placeholderTextColor="#999"
+              />
+            </View>
 
-            <Input
-              label="Email Address"
-              value={formData.email}
-              onChangeText={(value) => updateField('email', value)}
-              placeholder="Enter your email"
-              keyboardType="email-address"
-              autoCapitalize="none"
-              leftIcon={<Mail size={20} color={Colors.neutral[500]} />}
-            />
+            <View style={styles.inputContainer}>
+              <Mail size={20} color="#666" style={styles.inputIcon} />
+              <TextInput
+                style={styles.input}
+                value={formData.email}
+                onChangeText={(value) => updateField('email', value)}
+                placeholder="Enter your email"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                placeholderTextColor="#999"
+              />
+            </View>
 
-            <Input
-              label="Phone Number"
-              value={formData.phone}
-              onChangeText={(value) => updateField('phone', value)}
-              placeholder="Enter your phone number"
-              keyboardType="phone-pad"
-              leftIcon={<Phone size={20} color={Colors.neutral[500]} />}
-            />
+            <View style={styles.inputContainer}>
+              <Phone size={20} color="#666" style={styles.inputIcon} />
+              <TextInput
+                style={styles.input}
+                value={formData.phone}
+                onChangeText={(value) => updateField('phone', value)}
+                placeholder="Enter your phone number"
+                keyboardType="phone-pad"
+                placeholderTextColor="#999"
+              />
+            </View>
 
-            <Input
-              label="Location"
-              value={formData.location}
-              onChangeText={(value) => updateField('location', value)}
-              placeholder="Enter your city/area"
-              leftIcon={<MapPin size={20} color={Colors.neutral[500]} />}
-            />
+            <View style={styles.inputContainer}>
+              <MapPin size={20} color="#666" style={styles.inputIcon} />
+              <TextInput
+                style={styles.input}
+                value={formData.location}
+                onChangeText={(value) => updateField('location', value)}
+                placeholder="Enter your city/area"
+                placeholderTextColor="#999"
+              />
+            </View>
 
-            <Input
-              label="Password"
-              value={formData.password}
-              onChangeText={(value) => updateField('password', value)}
-              placeholder="Create a password"
-              secureTextEntry
-              leftIcon={<Lock size={20} color={Colors.neutral[500]} />}
-            />
+            <View style={styles.inputContainer}>
+              <Lock size={20} color="#666" style={styles.inputIcon} />
+              <TextInput
+                style={styles.input}
+                value={formData.password}
+                onChangeText={(value) => updateField('password', value)}
+                placeholder="Create a password"
+                secureTextEntry={!showPassword}
+                placeholderTextColor="#999"
+              />
+              <TouchableOpacity 
+                onPress={() => setShowPassword(!showPassword)}
+                style={styles.eyeIcon}
+              >
+                {showPassword ? (
+                  <EyeOff size={20} color="#666" />
+                ) : (
+                  <Eye size={20} color="#666" />
+                )}
+              </TouchableOpacity>
+            </View>
 
-            <Input
-              label="Confirm Password"
-              value={formData.confirmPassword}
-              onChangeText={(value) => updateField('confirmPassword', value)}
-              placeholder="Confirm your password"
-              secureTextEntry
-              leftIcon={<Lock size={20} color={Colors.neutral[500]} />}
-            />
+            <View style={styles.inputContainer}>
+              <Lock size={20} color="#666" style={styles.inputIcon} />
+              <TextInput
+                style={styles.input}
+                value={formData.confirmPassword}
+                onChangeText={(value) => updateField('confirmPassword', value)}
+                placeholder="Confirm your password"
+                secureTextEntry={!showConfirmPassword}
+                placeholderTextColor="#999"
+              />
+              <TouchableOpacity 
+                onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+                style={styles.eyeIcon}
+              >
+                {showConfirmPassword ? (
+                  <EyeOff size={20} color="#666" />
+                ) : (
+                  <Eye size={20} color="#666" />
+                )}
+              </TouchableOpacity>
+            </View>
 
-            <Button
-              title={loading ? "Creating Account..." : "Create Account"}
-              variant="primary"
+            <TouchableOpacity
+              style={[styles.registerButton, loading && styles.registerButtonDisabled]}
               onPress={handleRegister}
-              loading={loading}
-              fullWidth
-              style={styles.registerButton}
-            />
+              disabled={loading}
+            >
+              {loading ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text style={styles.registerButtonText}>Create Account</Text>
+              )}
+            </TouchableOpacity>
           </View>
 
           <View style={styles.footer}>
-            <Text variant="body2" color="secondary">
+            <Text style={styles.footerText}>
               Already have an account?{' '}
             </Text>
-            <Button
-              title="Sign In"
-              variant="ghost"
+            <TouchableOpacity
               onPress={() => router.push('/(auth)/login')}
-              style={styles.signInButton}
-            />
+            >
+              <Text style={styles.signInText}>Sign In</Text>
+            </TouchableOpacity>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -169,42 +211,97 @@ export default function RegisterScreen() {
   );
 }
 
+const Text = ({ children, style, ...props }: any) => (
+  <text style={[{ fontFamily: 'Poppins-Regular', color: '#333' }, style]} {...props}>
+    {children}
+  </text>
+);
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.white,
+    backgroundColor: '#fff',
   },
   keyboardView: {
     flex: 1,
   },
   scrollContent: {
     flexGrow: 1,
-    padding: Layout.spacing.lg,
+    padding: 24,
     justifyContent: 'center',
   },
   header: {
     alignItems: 'center',
-    marginBottom: Layout.spacing.xl,
+    marginBottom: 32,
   },
   title: {
-    marginBottom: Layout.spacing.xs,
+    fontSize: 28,
+    fontFamily: 'Poppins-Bold',
+    color: '#0077B6',
+    marginBottom: 8,
     textAlign: 'center',
   },
   subtitle: {
+    fontSize: 16,
+    fontFamily: 'Poppins-Regular',
+    color: '#666',
     textAlign: 'center',
   },
   form: {
-    marginBottom: Layout.spacing.xl,
+    marginBottom: 32,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    marginBottom: 16,
+    backgroundColor: '#f9f9f9',
+  },
+  inputIcon: {
+    marginRight: 12,
+  },
+  input: {
+    flex: 1,
+    height: 50,
+    fontSize: 16,
+    fontFamily: 'Poppins-Regular',
+    color: '#333',
+  },
+  eyeIcon: {
+    padding: 4,
   },
   registerButton: {
-    marginTop: Layout.spacing.lg,
+    backgroundColor: '#0077B6',
+    borderRadius: 12,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  registerButtonDisabled: {
+    backgroundColor: '#ccc',
+  },
+  registerButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontFamily: 'Poppins-SemiBold',
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  signInButton: {
-    paddingHorizontal: 0,
+  footerText: {
+    fontSize: 14,
+    fontFamily: 'Poppins-Regular',
+    color: '#666',
+  },
+  signInText: {
+    fontSize: 14,
+    fontFamily: 'Poppins-SemiBold',
+    color: '#0077B6',
   },
 });
