@@ -7,7 +7,8 @@ import {
   TextInput, 
   TouchableOpacity, 
   KeyboardAvoidingView, 
-  Platform 
+  Platform,
+  Alert
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import Colors from '../../../constants/Colors';
@@ -23,7 +24,7 @@ import {
   getJobById 
 } from '../../../utils/mockData';
 import { Message } from '../../../types/Message';
-import { ChevronLeft, Send, Paperclip, Info, Volume2 } from 'lucide-react-native';
+import { ChevronLeft, Send, Paperclip, Volume2 } from 'lucide-react-native';
 
 // We'll assume the current user is user1 for this demo
 const CURRENT_USER_ID = 'user1';
@@ -113,6 +114,21 @@ export default function ConversationScreen() {
     // Update messages
     setMessages([...messages, message]);
     setShowVoicePlayer(false);
+    
+    // Show success feedback
+    Alert.alert(
+      'Voice Message Sent! 🎤',
+      'Your voice message has been converted to text and sent successfully.',
+      [{ text: 'Great!', style: 'default' }]
+    );
+  };
+
+  const handleGoBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.push('/(tabs)/messages');
+    }
   };
 
   if (!conversation || !otherUser) {
@@ -128,7 +144,7 @@ export default function ConversationScreen() {
       <View style={styles.header}>
         <TouchableOpacity 
           style={styles.backButton} 
-          onPress={() => router.back()}
+          onPress={handleGoBack}
         >
           <ChevronLeft size={24} color={Colors.primary[500]} />
         </TouchableOpacity>
@@ -221,7 +237,7 @@ export default function ConversationScreen() {
             This conversation is about a job that is still pending.
           </Text>
           {relatedJob.providerId !== CURRENT_USER_ID && (
-            <TouchableOpacity onPress={() => router.push(`/jobs/${relatedJob.id}`)}>
+            <TouchableOpacity onPress={() => router.push(`/(tabs)/jobs/${relatedJob.id}`)}>
               <Text variant="body2" color="primary" weight="semibold">
                 View Job
               </Text>

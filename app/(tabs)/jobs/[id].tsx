@@ -95,6 +95,14 @@ export default function JobDetailScreen() {
     alert('Job has exceeded maximum duration. Security services have been automatically notified for your safety.');
   };
 
+  const handleGoBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.push('/(tabs)/jobs');
+    }
+  };
+
   if (loading) {
     return (
       <SafeAreaView style={styles.loadingContainer}>
@@ -110,7 +118,7 @@ export default function JobDetailScreen() {
         <Button 
           title="Go Back" 
           variant="outline"
-          onPress={() => router.back()} 
+          onPress={handleGoBack} 
           style={styles.goBackButton}
         />
       </SafeAreaView>
@@ -125,7 +133,7 @@ export default function JobDetailScreen() {
         <Button
           title="Back"
           variant="ghost"
-          onPress={() => router.back()}
+          onPress={handleGoBack}
           leftIcon={<ChevronLeft size={20} color={Colors.primary[500]} />}
         />
       </View>

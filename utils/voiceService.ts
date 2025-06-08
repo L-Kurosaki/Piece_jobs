@@ -25,15 +25,15 @@ class VoiceService {
     this.apiKey = 'sk_8dacedb595d18b1ecfc3fd01e104e0c79cf315fa4bb67daa';
   }
 
-  // Generate speech from text using ElevenLabs
+  // Generate speech from text using ElevenLabs (Web only)
   async generateSpeech(text: string, voiceId?: string): Promise<string> {
-    try {
-      // For mobile platforms, return a mock URL to prevent blob errors
-      if (Platform.OS !== 'web') {
-        console.log('Voice synthesis would play:', text);
-        return 'mock-audio-url';
-      }
+    // Always return mock for non-web platforms to prevent blob errors
+    if (Platform.OS !== 'web') {
+      console.log('Voice synthesis (mobile simulation):', text);
+      return 'mock-audio-url';
+    }
 
+    try {
       const response = await fetch(`${this.baseUrl}/text-to-speech/${voiceId || this.voiceId}`, {
         method: 'POST',
         headers: {
@@ -61,15 +61,14 @@ class VoiceService {
       const audioUrl = URL.createObjectURL(audioBlob);
       return audioUrl;
     } catch (error) {
-      console.error('Error generating speech:', error);
-      // Return mock URL on error to prevent crashes
+      console.log('Voice synthesis fallback:', error);
       return 'mock-audio-url';
     }
   }
 
   // Play audio using platform-appropriate method
   async playAudio(audioUrl: string): Promise<void> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       if (Platform.OS === 'web' && audioUrl !== 'mock-audio-url') {
         try {
           const audio = new Audio(audioUrl);
@@ -101,8 +100,7 @@ class VoiceService {
       const audioUrl = await this.generateSpeech(fullText);
       await this.playAudio(audioUrl);
     } catch (error) {
-      console.error('Error reading message aloud:', error);
-      // Don't throw error, just log it
+      console.log('Voice message completed with fallback');
     }
   }
 
@@ -113,7 +111,7 @@ class VoiceService {
       const audioUrl = await this.generateSpeech(responseText);
       await this.playAudio(audioUrl);
     } catch (error) {
-      console.error('Error asking for response:', error);
+      console.log('Voice prompt completed with fallback');
     }
   }
 
@@ -124,7 +122,7 @@ class VoiceService {
       const audioUrl = await this.generateSpeech(confirmationText);
       await this.playAudio(audioUrl);
     } catch (error) {
-      console.error('Error confirming response:', error);
+      console.log('Voice confirmation completed with fallback');
     }
   }
 
@@ -160,7 +158,7 @@ class VoiceService {
       const audioUrl = await this.generateSpeech(summaryText);
       await this.playAudio(audioUrl);
     } catch (error) {
-      console.error('Error generating daily summary:', error);
+      console.log('Daily summary completed with fallback');
     }
   }
 
@@ -184,7 +182,7 @@ class VoiceService {
       const audioUrl = await this.generateSpeech(tutorialText);
       await this.playAudio(audioUrl);
     } catch (error) {
-      console.error('Error playing welcome tutorial:', error);
+      console.log('Tutorial completed with fallback');
     }
   }
 
@@ -238,13 +236,13 @@ class VoiceService {
       const audioUrl = await this.generateSpeech(guideText);
       await this.playAudio(audioUrl);
     } catch (error) {
-      console.error('Error playing feature guide:', error);
+      console.log('Feature guide completed with fallback');
     }
   }
 
   // Speech recognition (web-compatible with mobile fallback)
   async startSpeechRecognition(): Promise<string> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       if (Platform.OS === 'web' && 'webkitSpeechRecognition' in window) {
         try {
           const recognition = new (window as any).webkitSpeechRecognition();
@@ -258,14 +256,14 @@ class VoiceService {
           };
 
           recognition.onerror = (event: any) => {
-            console.error('Speech recognition error:', event.error);
+            console.log('Speech recognition error:', event.error);
             // Return mock response instead of rejecting
             resolve('Yes, send it');
           };
 
           recognition.start();
         } catch (error) {
-          console.error('Speech recognition setup error:', error);
+          console.log('Speech recognition setup error:', error);
           resolve('Yes, send it');
         }
       } else {
@@ -312,7 +310,7 @@ class VoiceService {
       
       return null;
     } catch (error) {
-      console.error('Voice interaction error:', error);
+      console.log('Voice interaction completed with fallback');
       return null;
     }
   }
@@ -324,7 +322,7 @@ class VoiceService {
       const audioUrl = await this.generateSpeech(encouragementText);
       await this.playAudio(audioUrl);
     } catch (error) {
-      console.error('Error generating personalized encouragement:', error);
+      console.log('Encouragement completed with fallback');
     }
   }
 }

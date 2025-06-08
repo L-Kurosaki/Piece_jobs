@@ -37,7 +37,7 @@ export default function BidScreen() {
         [
           { 
             text: 'OK', 
-            onPress: () => router.back()
+            onPress: handleGoBack
           }
         ]
       );
@@ -48,6 +48,14 @@ export default function BidScreen() {
     }
   };
 
+  const handleGoBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.push('/(tabs)/jobs');
+    }
+  };
+
   if (!job) {
     return (
       <SafeAreaView style={styles.errorContainer}>
@@ -55,7 +63,7 @@ export default function BidScreen() {
         <Button 
           title="Go Back" 
           variant="outline"
-          onPress={() => router.back()} 
+          onPress={handleGoBack} 
           style={styles.goBackButton}
         />
       </SafeAreaView>
@@ -68,7 +76,7 @@ export default function BidScreen() {
         <Button
           title="Back"
           variant="ghost"
-          onPress={() => router.back()}
+          onPress={handleGoBack}
           leftIcon={<ChevronLeft size={20} color={Colors.primary[500]} />}
         />
         <Text variant="h3" weight="bold">Smart Bidding</Text>
