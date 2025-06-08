@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
 import { router } from 'expo-router';
-import { useAuth } from '../../../contexts/AuthContext';
 import Colors from '../../../constants/Colors';
 import Layout from '../../../constants/Layout';
 import Text from '../../../components/ui/Text';
@@ -15,6 +14,7 @@ import DailySummaryVoice from '../../../components/voice/DailySummaryVoice';
 import VoiceTutorial from '../../../components/voice/VoiceTutorial';
 import AdaptiveVoiceCoach from '../../../components/voice/AdaptiveVoiceCoach';
 import SmartNotifications from '../../../components/voice/SmartNotifications';
+import { mockUsers } from '../../../utils/mockData';
 import { 
   Settings, 
   Star, 
@@ -31,25 +31,23 @@ import {
   Brain
 } from 'lucide-react-native';
 
+// We'll assume the current user is user1 for this demo
+const CURRENT_USER_ID = 'user1';
+
 export default function ProfileScreen() {
-  const { user, profile, signOut } = useAuth();
+  const user = mockUsers.find(user => user.id === CURRENT_USER_ID);
   
-  if (!user || !profile) {
+  if (!user) {
     return (
       <SafeAreaView style={styles.errorContainer}>
-        <Text variant="body1" color="error">Profile not found</Text>
+        <Text variant="body1" color="error">User not found</Text>
       </SafeAreaView>
     );
   }
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
+  const formatDate = (timestamp: number) => {
+    const date = new Date(timestamp);
     return `${date.toLocaleString('default', { month: 'long' })} ${date.getFullYear()}`;
-  };
-
-  const handleSignOut = async () => {
-    await signOut();
-    router.replace('/(auth)/login');
   };
 
   return (
@@ -67,24 +65,24 @@ export default function ProfileScreen() {
 
         <View style={styles.userHeader}>
           <Avatar
-            source={profile.avatar_url}
+            source={user.avatar}
             size="xl"
-            initials={profile.name.split(' ').map((n: string) => n[0]).join('')}
-            verified={profile.verification_status?.identity === 'verified'}
+            initials={user.name.split(' ').map(n => n[0]).join('')}
+            verified={user.verificationStatus.identity === 'verified'}
           />
           <View style={styles.userInfo}>
             <Text variant="h3" weight="bold" style={styles.userName}>
-              {profile.name}
+              {user.name}
             </Text>
             <View style={styles.memberSince}>
               <Text variant="body2" color="secondary">
-                Member since {formatDate(profile.member_since)}
+                Member since {formatDate(user.memberSince)}
               </Text>
             </View>
             <View style={styles.ratingContainer}>
               <Star size={16} color={Colors.warning[500]} fill={Colors.warning[500]} />
               <Text variant="body2" weight="medium" style={styles.ratingText}>
-                {profile.rating?.averageRating?.toFixed(1) || '0.0'} ({profile.rating?.totalReviews || 0} reviews)
+                {user.rating.averageRating.toFixed(1)} ({user.rating.totalReviews} reviews)
               </Text>
             </View>
           </View>
@@ -106,17 +104,17 @@ export default function ProfileScreen() {
         </View>
 
         {/* Smart Notifications */}
-        <SmartNotifications userId={profile.id} />
+        <SmartNotifications userId={CURRENT_USER_ID} />
 
         {/* Adaptive Voice Coach */}
-        <AdaptiveVoiceCoach userId={profile.id} />
+        <AdaptiveVoiceCoach userId={CURRENT_USER_ID} />
 
         {/* Voice Features Section */}
         <View style={styles.section}>
           <Text variant="h4" weight="semibold" style={styles.sectionTitle}>
             🎤 Voice Assistant
           </Text>
-          <DailySummaryVoice userId={profile.id} />
+          <DailySummaryVoice userId={CURRENT_USER_ID} />
         </View>
 
         {/* Voice Tutorial Section */}
@@ -151,21 +149,21 @@ export default function ProfileScreen() {
             <View style={styles.infoItem}>
               <Phone size={20} color={Colors.primary[500]} />
               <Text variant="body1" style={styles.infoText}>
-                {profile.phone || 'Not provided'}
+                {user.phone}
               </Text>
             </View>
             <Divider style={styles.infoDivider} />
             <View style={styles.infoItem}>
               <Mail size={20} color={Colors.primary[500]} />
               <Text variant="body1" style={styles.infoText}>
-                {profile.email}
+                {user.email}
               </Text>
             </View>
             <Divider style={styles.infoDivider} />
             <View style={styles.infoItem}>
               <MapPin size={20} color={Colors.primary[500]} />
               <Text variant="body1" style={styles.infoText}>
-                {profile.location?.address || 'Location not set'}
+                {user.location.address}
               </Text>
             </View>
           </Card>
@@ -179,15 +177,15 @@ export default function ProfileScreen() {
             <View style={styles.verificationBadges}>
               <VerificationBadge
                 type="identity"
-                status={profile.verification_status?.identity || 'pending'}
+                status={user.verificationStatus.identity}
               />
               <VerificationBadge
                 type="address"
-                status={profile.verification_status?.address || 'pending'}
+                status={user.verificationStatus.address}
               />
               <VerificationBadge
                 type="background"
-                status={profile.verification_status?.background || 'pending'}
+                status={user.verificationStatus.background}
               />
             </View>
           </Card>
@@ -201,7 +199,7 @@ export default function ProfileScreen() {
             <Card style={styles.statCard}>
               <Briefcase size={24} color={Colors.primary[500]} />
               <Text variant="h3" weight="bold" color="primary" style={styles.statNumber}>
-                {profile.completed_jobs || 0}
+                {user.completedJobs}
               </Text>
               <Text variant="body2" color="secondary">Completed</Text>
             </Card>
@@ -209,7 +207,7 @@ export default function ProfileScreen() {
             <Card style={styles.statCard}>
               <Clock size={24} color={Colors.accent[500]} />
               <Text variant="h3" weight="bold" color="accent" style={styles.statNumber}>
-                {profile.active_jobs || 0}
+                {user.activeJobs}
               </Text>
               <Text variant="body2" color="secondary">Active</Text>
             </Card>
@@ -227,7 +225,7 @@ export default function ProfileScreen() {
         <Button
           title="Log Out"
           variant="outline"
-          onPress={handleSignOut}
+          onPress={() => console.log('Log out')}
           leftIcon={<LogOut size={20} color={Colors.error[500]} />}
           style={styles.logoutButton}
         />

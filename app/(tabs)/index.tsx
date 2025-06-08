@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
 import { router } from 'expo-router';
-import { useAuth } from '../../contexts/AuthContext';
-import { useJobs } from '../../hooks/useJobs';
 import Colors from '../../constants/Colors';
 import Layout from '../../constants/Layout';
 import Text from '../../components/ui/Text';
@@ -11,6 +9,7 @@ import JobCard from '../../components/job/JobCard';
 import CategorySelector from '../../components/ui/CategorySelector';
 import VoiceTutorial from '../../components/voice/VoiceTutorial';
 import { Briefcase, Search, Compass, Sparkles, CircleCheck as CheckCircle2, Volume2 } from 'lucide-react-native';
+import { mockJobs } from '../../utils/mockData';
 import { JobCategory } from '../../types/Job';
 
 // Configure categories with icons
@@ -45,27 +44,18 @@ const categories = [
 export default function HomeScreen() {
   const [selectedCategory, setSelectedCategory] = useState<JobCategory | null>(null);
   const [showVoiceTutorial, setShowVoiceTutorial] = useState(true);
-  const { user, profile } = useAuth();
-  const { jobs, loading, error } = useJobs({ category: selectedCategory });
 
   // Filter jobs based on selected category
   const filteredJobs = selectedCategory
-    ? jobs.filter(job => job.category === selectedCategory)
-    : jobs.slice(0, 5); // Show first 5 jobs on home screen
-
-  if (!user) {
-    router.replace('/(auth)/login');
-    return null;
-  }
+    ? mockJobs.filter(job => job.category === selectedCategory)
+    : mockJobs;
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <View style={styles.titleRow}>
           <View>
-            <Text variant="h2" weight="bold" style={styles.title}>
-              Welcome, {profile?.name || 'User'}!
-            </Text>
+            <Text variant="h2" weight="bold" style={styles.title}>PieceJob</Text>
             <Text variant="body1" color="secondary" style={styles.subtitle}>
               Find your next opportunity
             </Text>
@@ -106,39 +96,27 @@ export default function HomeScreen() {
             />
           </View>
 
-          {loading ? (
-            <View style={styles.loadingContainer}>
-              <Text variant="body1" color="secondary">Loading jobs...</Text>
-            </View>
-          ) : error ? (
-            <View style={styles.errorContainer}>
-              <Text variant="body1" color="error">Error loading jobs</Text>
-            </View>
-          ) : (
-            <>
-              {filteredJobs.map(job => (
-                <JobCard
-                  key={job.id}
-                  job={job}
-                  onPress={() => router.push(`/jobs/${job.id}`)}
-                />
-              ))}
+          {filteredJobs.map(job => (
+            <JobCard
+              key={job.id}
+              job={job}
+              onPress={() => router.push(`/jobs/${job.id}`)}
+            />
+          ))}
 
-              {filteredJobs.length === 0 && (
-                <View style={styles.emptyState}>
-                  <Text variant="body1" color="secondary" centered>
-                    No jobs available in this category.
-                  </Text>
-                  <Button
-                    title="Reset Filter"
-                    variant="outline"
-                    size="small"
-                    style={styles.resetButton}
-                    onPress={() => setSelectedCategory(null)}
-                  />
-                </View>
-              )}
-            </>
+          {filteredJobs.length === 0 && (
+            <View style={styles.emptyState}>
+              <Text variant="body1" color="secondary" centered>
+                No jobs available in this category.
+              </Text>
+              <Button
+                title="Reset Filter"
+                variant="outline"
+                size="small"
+                style={styles.resetButton}
+                onPress={() => setSelectedCategory(null)}
+              />
+            </View>
           )}
         </View>
       </ScrollView>
@@ -188,14 +166,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: Layout.spacing.md,
-  },
-  loadingContainer: {
-    padding: Layout.spacing.xl,
-    alignItems: 'center',
-  },
-  errorContainer: {
-    padding: Layout.spacing.xl,
-    alignItems: 'center',
   },
   emptyState: {
     padding: Layout.spacing.xl,
