@@ -12,6 +12,8 @@ import Divider from '../../../components/ui/Divider';
 import VerificationBadge from '../../../components/profile/VerificationBadge';
 import DailySummaryVoice from '../../../components/voice/DailySummaryVoice';
 import VoiceTutorial from '../../../components/voice/VoiceTutorial';
+import AdaptiveVoiceCoach from '../../../components/voice/AdaptiveVoiceCoach';
+import SmartNotifications from '../../../components/voice/SmartNotifications';
 import { mockUsers } from '../../../utils/mockData';
 import { 
   Settings, 
@@ -25,7 +27,8 @@ import {
   Mail,
   Wallet,
   ChevronRight,
-  Volume2
+  Volume2,
+  Brain
 } from 'lucide-react-native';
 
 // We'll assume the current user is user1 for this demo
@@ -87,6 +90,25 @@ export default function ProfileScreen() {
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
+        {/* AI Learning Section */}
+        <View style={styles.aiSection}>
+          <View style={styles.aiHeader}>
+            <Brain size={24} color={Colors.primary[500]} />
+            <Text variant="h4" weight="semibold" style={styles.aiTitle}>
+              🤖 AI-Powered Features
+            </Text>
+          </View>
+          <Text variant="body2" color="secondary" style={styles.aiDescription}>
+            Your personal AI learns from your behavior and adapts to help you succeed
+          </Text>
+        </View>
+
+        {/* Smart Notifications */}
+        <SmartNotifications userId={CURRENT_USER_ID} />
+
+        {/* Adaptive Voice Coach */}
+        <AdaptiveVoiceCoach userId={CURRENT_USER_ID} />
+
         {/* Voice Features Section */}
         <View style={styles.section}>
           <Text variant="h4" weight="semibold" style={styles.sectionTitle}>
@@ -257,6 +279,25 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: Layout.spacing.lg,
+  },
+  aiSection: {
+    backgroundColor: Colors.primary[50],
+    padding: Layout.spacing.lg,
+    borderRadius: Layout.borderRadius.md,
+    marginBottom: Layout.spacing.lg,
+    borderWidth: 1,
+    borderColor: Colors.primary[200],
+  },
+  aiHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: Layout.spacing.sm,
+  },
+  aiTitle: {
+    marginLeft: Layout.spacing.sm,
+  },
+  aiDescription: {
+    lineHeight: 20,
   },
   section: {
     marginBottom: Layout.spacing.xl,

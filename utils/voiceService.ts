@@ -1,4 +1,5 @@
 import { Platform } from 'react-native';
+import { aiLearningService } from './aiLearningService';
 
 export interface VoiceMessage {
   id: string;
@@ -111,26 +112,34 @@ class VoiceService {
     }
   }
 
-  // Generate daily summary speech
-  async generateDailySummary(summary: DailySummary): Promise<void> {
+  // Generate adaptive daily summary speech using AI learning
+  async generateDailySummary(summary: DailySummary, userId?: string): Promise<void> {
     try {
-      let summaryText = `Good evening! Here's your daily summary: `;
-      summaryText += `Today, you completed ${summary.completedJobs} job${summary.completedJobs !== 1 ? 's' : ''}, `;
-      summaryText += `earned R${summary.earnings.toFixed(2)}, `;
+      let summaryText = '';
       
-      if (summary.averageRating > 0) {
-        summaryText += `and received an average rating of ${summary.averageRating.toFixed(1)} stars. `;
+      if (userId) {
+        // Use AI learning service to generate adaptive summary
+        summaryText = await aiLearningService.generateAdaptiveVoiceResponse(userId, 'daily_summary');
+      } else {
+        // Fallback to basic summary
+        summaryText = `Good evening! Here's your daily summary: `;
+        summaryText += `Today, you completed ${summary.completedJobs} job${summary.completedJobs !== 1 ? 's' : ''}, `;
+        summaryText += `earned R${summary.earnings.toFixed(2)}, `;
+        
+        if (summary.averageRating > 0) {
+          summaryText += `and received an average rating of ${summary.averageRating.toFixed(1)} stars. `;
+        }
+        
+        if (summary.pendingBookings > 0) {
+          summaryText += `You have ${summary.pendingBookings} pending booking${summary.pendingBookings !== 1 ? 's' : ''} `;
+        }
+        
+        if (summary.upcomingJobs.length > 0) {
+          summaryText += `and ${summary.upcomingJobs.length} job${summary.upcomingJobs.length !== 1 ? 's' : ''} scheduled for tomorrow. `;
+        }
+        
+        summaryText += `Great work today!`;
       }
-      
-      if (summary.pendingBookings > 0) {
-        summaryText += `You have ${summary.pendingBookings} pending booking${summary.pendingBookings !== 1 ? 's' : ''} `;
-      }
-      
-      if (summary.upcomingJobs.length > 0) {
-        summaryText += `and ${summary.upcomingJobs.length} job${summary.upcomingJobs.length !== 1 ? 's' : ''} scheduled for tomorrow. `;
-      }
-      
-      summaryText += `Great work today!`;
 
       const audioUrl = await this.generateSpeech(summaryText);
       await this.playAudio(audioUrl);
@@ -140,14 +149,22 @@ class VoiceService {
     }
   }
 
-  // Voice tutorial for new users
-  async playWelcomeTutorial(): Promise<void> {
+  // Voice tutorial for new users with adaptive content
+  async playWelcomeTutorial(userId?: string): Promise<void> {
     try {
-      const tutorialText = `Welcome to PieceJob! I'm your voice assistant, here to help you navigate the app hands-free. 
-      Here's how you can get started: First, complete your profile to build trust with customers. 
-      Then, browse available jobs in your area and place competitive bids. 
-      When customers message you, I'll read their messages aloud and help you respond using just your voice. 
-      You can also ask me for your daily summary anytime. Let's get you started on your journey to earning more!`;
+      let tutorialText = '';
+      
+      if (userId) {
+        // Use AI learning service for adaptive tutorial
+        tutorialText = await aiLearningService.generateAdaptiveVoiceResponse(userId, 'tutorial');
+      } else {
+        // Fallback tutorial
+        tutorialText = `Welcome to PieceJob! I'm your voice assistant, here to help you navigate the app hands-free. 
+        Here's how you can get started: First, complete your profile to build trust with customers. 
+        Then, browse available jobs in your area and place competitive bids. 
+        When customers message you, I'll read their messages aloud and help you respond using just your voice. 
+        You can also ask me for your daily summary anytime. Let's get you started on your journey to earning more!`;
+      }
       
       const audioUrl = await this.generateSpeech(tutorialText);
       await this.playAudio(audioUrl);
@@ -157,33 +174,48 @@ class VoiceService {
     }
   }
 
-  // Voice guidance for specific features
-  async playFeatureGuide(feature: 'bidding' | 'messaging' | 'profile' | 'safety'): Promise<void> {
+  // Voice guidance for specific features with learning adaptation
+  async playFeatureGuide(feature: 'bidding' | 'messaging' | 'profile' | 'safety', userId?: string): Promise<void> {
     try {
       let guideText = '';
       
+      // Check if user needs personalized guidance
+      if (userId && aiLearningService.needsIntervention(userId)) {
+        const interventionMessage = aiLearningService.generateInterventionMessage(userId);
+        guideText = interventionMessage + ' ';
+      }
+      
       switch (feature) {
         case 'bidding':
-          guideText = `Here's how to place winning bids: First, read the job description carefully. 
+          guideText += `Here's how to place winning bids: First, read the job description carefully. 
           Consider the time needed and your costs. Price competitively but fairly. 
           Write a personal message explaining your experience and what you'll include. 
           Respond quickly to increase your chances of winning the job.`;
+          
+          // Add personalized tips if available
+          if (userId) {
+            const tips = aiLearningService.getPersonalizedRecommendations(userId);
+            const biddingTips = tips.filter(tip => tip.includes('bid') || tip.includes('pric'));
+            if (biddingTips.length > 0) {
+              guideText += ` Personal tip for you: ${biddingTips[0]}`;
+            }
+          }
           break;
           
         case 'messaging':
-          guideText = `Messaging made easy: When you receive a message, I'll read it aloud automatically. 
+          guideText += `Messaging made easy: When you receive a message, I'll read it aloud automatically. 
           Just say "Yes" when I ask if you want to respond, then speak your reply naturally. 
           I'll read it back for confirmation before sending. No typing required!`;
           break;
           
         case 'profile':
-          guideText = `Building a strong profile: Add a clear photo of yourself, write a compelling bio highlighting your skills, 
+          guideText += `Building a strong profile: Add a clear photo of yourself, write a compelling bio highlighting your skills, 
           upload certificates if you have them, and always deliver quality work to maintain high ratings. 
           Verified profiles get more bookings!`;
           break;
           
         case 'safety':
-          guideText = `Your safety is our priority: Every job has a built-in timer that monitors duration. 
+          guideText += `Your safety is our priority: Every job has a built-in timer that monitors duration. 
           If a job takes too long, security services are automatically notified. 
           Use the emergency button if you ever feel unsafe - help will be dispatched immediately to your location.`;
           break;
@@ -223,8 +255,8 @@ class VoiceService {
     });
   }
 
-  // Complete voice interaction flow
-  async handleVoiceInteraction(incomingMessage: string, senderName: string): Promise<string | null> {
+  // Complete voice interaction flow with AI learning
+  async handleVoiceInteraction(incomingMessage: string, senderName: string, userId?: string): Promise<string | null> {
     try {
       // Step 1: Read the incoming message
       await this.readMessageAloud(incomingMessage, senderName);
@@ -246,6 +278,13 @@ class VoiceService {
         const confirmation = await this.startSpeechRecognition();
         
         if (confirmation.toLowerCase().includes('yes') || confirmation.toLowerCase().includes('send')) {
+          // Update AI learning with successful voice interaction
+          if (userId) {
+            aiLearningService.updateUserProfile(userId, {
+              averageResponseTime: 0.5, // Voice responses are faster
+            });
+          }
+          
           return responseText;
         }
       }
@@ -254,6 +293,18 @@ class VoiceService {
     } catch (error) {
       console.error('Voice interaction error:', error);
       return null;
+    }
+  }
+
+  // Generate personalized encouragement using AI learning
+  async generatePersonalizedEncouragement(userId: string): Promise<void> {
+    try {
+      const encouragementText = await aiLearningService.generateAdaptiveVoiceResponse(userId, 'encouragement');
+      const audioUrl = await this.generateSpeech(encouragementText);
+      await this.playAudio(audioUrl);
+    } catch (error) {
+      console.error('Error generating personalized encouragement:', error);
+      throw error;
     }
   }
 }
