@@ -8,9 +8,8 @@ config.resolver.sourceExts = ['js', 'jsx', 'json', 'ts', 'tsx'];
 // Basic asset extensions
 config.resolver.assetExts.push('db');
 
-// Remove problematic TypeScript configurations
-delete config.resolver.unstable_enablePackageExports;
-delete config.resolver.unstable_conditionNames;
+// Keep the default package exports and condition names for proper module resolution
+// These are needed for TypeScript files in node_modules
 
 // Use default transformer
 config.transformer.babelTransformerPath = require.resolve('metro-react-native-babel-transformer');
