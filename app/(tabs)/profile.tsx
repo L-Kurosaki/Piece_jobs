@@ -8,20 +8,7 @@ import {
   TouchableOpacity,
   Image
 } from 'react-native';
-import { 
-  Settings, 
-  Star, 
-  MapPin, 
-  Calendar,
-  Heart,
-  Clock,
-  Award,
-  ChevronRight,
-  Bell,
-  CreditCard,
-  HelpCircle,
-  LogOut
-} from 'lucide-react-native';
+import { Settings, Star, MapPin, Calendar, Heart, Clock, Award, ChevronRight, Bell, CreditCard, CircleHelp as HelpCircle, LogOut } from 'lucide-react-native';
 
 export default function ProfileScreen() {
   const user = {

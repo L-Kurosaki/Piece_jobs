@@ -1,6 +1,6 @@
 import { Link, Stack } from 'expo-router';
 import { StyleSheet, View, Image } from 'react-native';
-import { Home } from 'lucide-react-native';
+import { Chrome as Home } from 'lucide-react-native';
 
 export default function NotFoundScreen() {
   return (
