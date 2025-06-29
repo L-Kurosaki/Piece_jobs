@@ -1,13 +1,13 @@
 import { Tabs } from 'expo-router';
 import { StyleSheet } from 'react-native';
-import { Chrome as Home, Briefcase, MessageSquare, User } from 'lucide-react-native';
+import { Home, Search, Heart, User } from 'lucide-react-native';
 
 export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: '#0077B6',
-        tabBarInactiveTintColor: '#999',
+        tabBarActiveTintColor: '#6366f1',
+        tabBarInactiveTintColor: '#9ca3af',
         tabBarLabelStyle: styles.tabLabel,
         tabBarStyle: styles.tabBar,
         tabBarShowLabel: true,
@@ -22,17 +22,17 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="jobs"
+        name="explore"
         options={{
-          title: 'Jobs',
-          tabBarIcon: ({ color, size }) => <Briefcase size={size} color={color} />,
+          title: 'Explore',
+          tabBarIcon: ({ color, size }) => <Search size={size} color={color} />,
         }}
       />
       <Tabs.Screen
-        name="messages"
+        name="favorites"
         options={{
-          title: 'Messages',
-          tabBarIcon: ({ color, size }) => <MessageSquare size={size} color={color} />,
+          title: 'Favorites',
+          tabBarIcon: ({ color, size }) => <Heart size={size} color={color} />,
         }}
       />
       <Tabs.Screen
@@ -48,20 +48,21 @@ export default function TabLayout() {
 
 const styles = StyleSheet.create({
   tabBar: {
-    backgroundColor: '#fff',
-    borderTopColor: '#eee',
+    backgroundColor: '#ffffff',
+    borderTopColor: '#f3f4f6',
+    borderTopWidth: 1,
     paddingTop: 8,
     paddingBottom: 8,
-    height: 65,
+    height: 70,
     elevation: 8,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowRadius: 8,
   },
   tabLabel: {
-    fontSize: 11,
-    fontFamily: 'Poppins-Medium',
-    marginTop: 2,
+    fontSize: 12,
+    fontFamily: 'Inter-Medium',
+    marginTop: 4,
   },
 });

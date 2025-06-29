@@ -1,118 +1,136 @@
 import React from 'react';
-import { View, StyleSheet, SafeAreaView, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
-import { Settings, Star, Briefcase, Clock, Shield, LogOut, CreditCard as Edit, Phone, Mail, MapPin } from 'lucide-react-native';
+import { 
+  View, 
+  Text, 
+  StyleSheet, 
+  ScrollView, 
+  SafeAreaView, 
+  TouchableOpacity,
+  Image
+} from 'react-native';
+import { 
+  Settings, 
+  Star, 
+  MapPin, 
+  Calendar,
+  Heart,
+  Clock,
+  Award,
+  ChevronRight,
+  Bell,
+  CreditCard,
+  HelpCircle,
+  LogOut
+} from 'lucide-react-native';
 
 export default function ProfileScreen() {
   const user = {
-    name: 'John Smith',
-    email: 'john.smith@example.com',
-    phone: '+27 123 456 789',
-    location: 'Cape Town, South Africa',
-    avatar: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=200',
-    rating: 4.8,
-    totalReviews: 47,
-    completedJobs: 52,
-    activeJobs: 3,
-    memberSince: 'March 2024',
-    skills: ['Cleaning', 'Gardening', 'Maintenance'],
+    name: 'Alex Johnson',
+    email: 'alex.johnson@example.com',
+    location: 'San Francisco, CA',
+    memberSince: 'March 2023',
+    avatar: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=200',
+    stats: {
+      experiences: 24,
+      favorites: 12,
+      reviews: 18,
+      rating: 4.8
+    }
   };
 
-  const stats = [
-    { label: 'Completed', value: user.completedJobs, icon: Briefcase, color: '#0077B6' },
-    { label: 'Active', value: user.activeJobs, icon: Clock, color: '#FF9505' },
-    { label: 'Rating', value: user.rating, icon: Star, color: '#FFB800' },
+  const menuItems = [
+    { icon: <Bell size={24} color="#6b7280" />, title: 'Notifications', subtitle: 'Manage your alerts' },
+    { icon: <CreditCard size={24} color="#6b7280" />, title: 'Payment Methods', subtitle: 'Cards and billing' },
+    { icon: <Calendar size={24} color="#6b7280" />, title: 'Booking History', subtitle: 'View past bookings' },
+    { icon: <HelpCircle size={24} color="#6b7280" />, title: 'Help & Support', subtitle: 'Get assistance' },
+    { icon: <Settings size={24} color="#6b7280" />, title: 'Settings', subtitle: 'App preferences' },
   ];
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Profile</Text>
-        <TouchableOpacity style={styles.settingsButton}>
-          <Settings size={24} color="#333" />
-        </TouchableOpacity>
-      </View>
-
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Profile Info */}
-        <View style={styles.profileSection}>
-          <Image source={{ uri: user.avatar }} style={styles.avatar} />
-          <View style={styles.profileInfo}>
-            <Text style={styles.name}>{user.name}</Text>
-            <Text style={styles.memberSince}>Member since {user.memberSince}</Text>
-            
-            <View style={styles.ratingContainer}>
-              <Star size={16} color="#FFB800" fill="#FFB800" />
-              <Text style={styles.rating}>{user.rating}</Text>
-              <Text style={styles.reviewCount}>({user.totalReviews} reviews)</Text>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {/* Header */}
+        <View style={styles.header}>
+          <View style={styles.profileSection}>
+            <Image source={{ uri: user.avatar }} style={styles.avatar} />
+            <View style={styles.profileInfo}>
+              <Text style={styles.name}>{user.name}</Text>
+              <View style={styles.locationRow}>
+                <MapPin size={16} color="#6b7280" />
+                <Text style={styles.location}>{user.location}</Text>
+              </View>
+              <View style={styles.memberRow}>
+                <Calendar size={16} color="#6b7280" />
+                <Text style={styles.memberSince}>Member since {user.memberSince}</Text>
+              </View>
             </View>
+            <TouchableOpacity style={styles.editButton}>
+              <Settings size={20} color="#6366f1" />
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity style={styles.editButton}>
-            <Edit size={20} color="#0077B6" />
-          </TouchableOpacity>
         </View>
 
         {/* Stats */}
         <View style={styles.statsContainer}>
-          {stats.map((stat, index) => (
-            <View key={index} style={styles.statCard}>
-              <stat.icon size={24} color={stat.color} />
-              <Text style={styles.statValue}>{stat.value}</Text>
-              <Text style={styles.statLabel}>{stat.label}</Text>
-            </View>
-          ))}
-        </View>
-
-        {/* Contact Info */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Contact Information</Text>
-          <View style={styles.infoCard}>
-            <View style={styles.infoItem}>
-              <Phone size={20} color="#0077B6" />
-              <Text style={styles.infoText}>{user.phone}</Text>
-            </View>
-            <View style={styles.infoItem}>
-              <Mail size={20} color="#0077B6" />
-              <Text style={styles.infoText}>{user.email}</Text>
-            </View>
-            <View style={styles.infoItem}>
-              <MapPin size={20} color="#0077B6" />
-              <Text style={styles.infoText}>{user.location}</Text>
-            </View>
+          <View style={styles.statCard}>
+            <Clock size={24} color="#6366f1" />
+            <Text style={styles.statNumber}>{user.stats.experiences}</Text>
+            <Text style={styles.statLabel}>Experiences</Text>
+          </View>
+          <View style={styles.statCard}>
+            <Heart size={24} color="#ef4444" />
+            <Text style={styles.statNumber}>{user.stats.favorites}</Text>
+            <Text style={styles.statLabel}>Favorites</Text>
+          </View>
+          <View style={styles.statCard}>
+            <Star size={24} color="#fbbf24" />
+            <Text style={styles.statNumber}>{user.stats.rating}</Text>
+            <Text style={styles.statLabel}>Rating</Text>
+          </View>
+          <View style={styles.statCard}>
+            <Award size={24} color="#10b981" />
+            <Text style={styles.statNumber}>{user.stats.reviews}</Text>
+            <Text style={styles.statLabel}>Reviews</Text>
           </View>
         </View>
 
-        {/* Skills */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Skills</Text>
-          <View style={styles.skillsContainer}>
-            {user.skills.map((skill, index) => (
-              <View key={index} style={styles.skillTag}>
-                <Text style={styles.skillText}>{skill}</Text>
+        {/* Achievement Badge */}
+        <View style={styles.achievementCard}>
+          <View style={styles.achievementIcon}>
+            <Award size={32} color="#fbbf24" />
+          </View>
+          <View style={styles.achievementContent}>
+            <Text style={styles.achievementTitle}>Explorer Badge</Text>
+            <Text style={styles.achievementSubtitle}>
+              You've completed 20+ experiences! Keep exploring to unlock more badges.
+            </Text>
+          </View>
+        </View>
+
+        {/* Menu Items */}
+        <View style={styles.menuSection}>
+          {menuItems.map((item, index) => (
+            <TouchableOpacity key={index} style={styles.menuItem}>
+              <View style={styles.menuIcon}>
+                {item.icon}
               </View>
-            ))}
-          </View>
-        </View>
-
-        {/* Verification */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Verification</Text>
-          <View style={styles.verificationCard}>
-            <View style={styles.verificationItem}>
-              <Shield size={20} color="#2E7D32" />
-              <Text style={styles.verificationText}>Identity Verified</Text>
-            </View>
-            <View style={styles.verificationItem}>
-              <Shield size={20} color="#2E7D32" />
-              <Text style={styles.verificationText}>Background Check Complete</Text>
-            </View>
-          </View>
+              <View style={styles.menuContent}>
+                <Text style={styles.menuTitle}>{item.title}</Text>
+                <Text style={styles.menuSubtitle}>{item.subtitle}</Text>
+              </View>
+              <ChevronRight size={20} color="#d1d5db" />
+            </TouchableOpacity>
+          ))}
         </View>
 
         {/* Logout */}
         <TouchableOpacity style={styles.logoutButton}>
-          <LogOut size={20} color="#E53E3E" />
+          <LogOut size={20} color="#ef4444" />
           <Text style={styles.logoutText}>Log Out</Text>
         </TouchableOpacity>
+
+        {/* App Version */}
+        <Text style={styles.versionText}>Version 1.0.0</Text>
       </ScrollView>
     </SafeAreaView>
   );
@@ -121,34 +139,18 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#f9fafb',
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 16,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-  },
-  title: {
-    fontSize: 24,
-    fontFamily: 'Poppins-Bold',
-    color: '#333',
-  },
-  settingsButton: {
-    padding: 8,
-  },
-  content: {
-    flex: 1,
+    backgroundColor: '#ffffff',
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 24,
+    marginBottom: 20,
   },
   profileSection: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 20,
-    backgroundColor: '#fff',
-    marginBottom: 16,
   },
   avatar: {
     width: 80,
@@ -160,134 +162,174 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   name: {
-    fontSize: 20,
-    fontFamily: 'Poppins-Bold',
-    color: '#333',
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#111827',
+    fontFamily: 'Inter-Bold',
+    marginBottom: 8,
+  },
+  locationRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 4,
+  },
+  location: {
+    fontSize: 14,
+    color: '#6b7280',
+    fontFamily: 'Inter-Regular',
+    marginLeft: 4,
+  },
+  memberRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   memberSince: {
     fontSize: 14,
-    fontFamily: 'Poppins-Regular',
-    color: '#666',
-    marginBottom: 8,
-  },
-  ratingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  rating: {
-    fontSize: 16,
-    fontFamily: 'Poppins-SemiBold',
-    color: '#333',
-    marginLeft: 4,
-  },
-  reviewCount: {
-    fontSize: 14,
-    fontFamily: 'Poppins-Regular',
-    color: '#666',
+    color: '#6b7280',
+    fontFamily: 'Inter-Regular',
     marginLeft: 4,
   },
   editButton: {
-    padding: 8,
+    width: 44,
+    height: 44,
+    backgroundColor: '#f3f4f6',
+    borderRadius: 22,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   statsContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    backgroundColor: '#fff',
-    padding: 20,
-    marginBottom: 16,
+    paddingHorizontal: 20,
+    marginBottom: 24,
   },
   statCard: {
+    flex: 1,
+    backgroundColor: '#ffffff',
+    padding: 16,
+    borderRadius: 16,
     alignItems: 'center',
+    marginHorizontal: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
   },
-  statValue: {
-    fontSize: 24,
-    fontFamily: 'Poppins-Bold',
-    color: '#333',
+  statNumber: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#111827',
+    fontFamily: 'Inter-Bold',
     marginTop: 8,
     marginBottom: 4,
   },
   statLabel: {
     fontSize: 12,
-    fontFamily: 'Poppins-Regular',
-    color: '#666',
+    color: '#6b7280',
+    fontFamily: 'Inter-Regular',
   },
-  section: {
-    backgroundColor: '#fff',
+  achievementCard: {
+    backgroundColor: '#fffbeb',
+    marginHorizontal: 20,
     padding: 20,
-    marginBottom: 16,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontFamily: 'Poppins-SemiBold',
-    color: '#333',
-    marginBottom: 16,
-  },
-  infoCard: {
-    backgroundColor: '#f8f8f8',
-    borderRadius: 12,
-    padding: 16,
-  },
-  infoItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  infoText: {
-    fontSize: 16,
-    fontFamily: 'Poppins-Regular',
-    color: '#333',
-    marginLeft: 12,
-  },
-  skillsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
-  skillTag: {
-    backgroundColor: '#E3F2FD',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
     borderRadius: 16,
-    marginRight: 8,
-    marginBottom: 8,
-  },
-  skillText: {
-    fontSize: 14,
-    fontFamily: 'Poppins-Medium',
-    color: '#0077B6',
-  },
-  verificationCard: {
-    backgroundColor: '#E8F5E8',
-    borderRadius: 12,
-    padding: 16,
-  },
-  verificationItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 24,
+    borderWidth: 1,
+    borderColor: '#fef3c7',
   },
-  verificationText: {
+  achievementIcon: {
+    width: 60,
+    height: 60,
+    backgroundColor: '#fef3c7',
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 16,
+  },
+  achievementContent: {
+    flex: 1,
+  },
+  achievementTitle: {
     fontSize: 16,
-    fontFamily: 'Poppins-Medium',
-    color: '#2E7D32',
-    marginLeft: 12,
+    fontWeight: '700',
+    color: '#92400e',
+    fontFamily: 'Inter-Bold',
+    marginBottom: 4,
+  },
+  achievementSubtitle: {
+    fontSize: 14,
+    color: '#a16207',
+    fontFamily: 'Inter-Regular',
+    lineHeight: 20,
+  },
+  menuSection: {
+    backgroundColor: '#ffffff',
+    marginHorizontal: 20,
+    borderRadius: 16,
+    marginBottom: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  menuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f3f4f6',
+  },
+  menuIcon: {
+    width: 44,
+    height: 44,
+    backgroundColor: '#f3f4f6',
+    borderRadius: 22,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 16,
+  },
+  menuContent: {
+    flex: 1,
+  },
+  menuTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#111827',
+    fontFamily: 'Inter-SemiBold',
+    marginBottom: 2,
+  },
+  menuSubtitle: {
+    fontSize: 14,
+    color: '#6b7280',
+    fontFamily: 'Inter-Regular',
   },
   logoutButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: '#ffffff',
+    marginHorizontal: 20,
     padding: 16,
-    marginHorizontal: 16,
-    marginBottom: 32,
-    borderRadius: 12,
+    borderRadius: 16,
+    marginBottom: 20,
     borderWidth: 1,
-    borderColor: '#E53E3E',
+    borderColor: '#fecaca',
   },
   logoutText: {
     fontSize: 16,
-    fontFamily: 'Poppins-SemiBold',
-    color: '#E53E3E',
+    fontWeight: '600',
+    color: '#ef4444',
+    fontFamily: 'Inter-SemiBold',
     marginLeft: 8,
+  },
+  versionText: {
+    fontSize: 12,
+    color: '#9ca3af',
+    fontFamily: 'Inter-Regular',
+    textAlign: 'center',
+    marginBottom: 40,
   },
 });
