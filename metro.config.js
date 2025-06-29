@@ -2,8 +2,8 @@ const { getDefaultConfig } = require('expo/metro-config');
 
 const config = getDefaultConfig(__dirname);
 
-// Simplify resolver configuration
-config.resolver.sourceExts = ['js', 'jsx', 'json', 'tsx'];
+// Add TypeScript support to resolver configuration
+config.resolver.sourceExts = ['js', 'jsx', 'json', 'ts', 'tsx'];
 
 // Basic asset extensions
 config.resolver.assetExts.push('db');
