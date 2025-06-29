@@ -3,13 +3,13 @@ const { getDefaultConfig } = require('expo/metro-config');
 const config = getDefaultConfig(__dirname);
 
 // Add TypeScript support to resolver configuration
-config.resolver.sourceExts = ['js', 'jsx', 'json', 'ts', 'tsx'];
+config.resolver.sourceExts = ['js', 'jsx', 'json', 'ts', 'tsx', 'mjs'];
 
 // Basic asset extensions
 config.resolver.assetExts.push('db');
 
-// Keep the default package exports and condition names for proper module resolution
-// These are needed for TypeScript files in node_modules
+// Enable package exports for proper module resolution
+config.resolver.unstable_enablePackageExports = true;
 
 // Use default transformer
 config.transformer.babelTransformerPath = require.resolve('metro-react-native-babel-transformer');
